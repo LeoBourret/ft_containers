@@ -2,6 +2,7 @@
 # define BTREE_HPP
 
 #include <cstdlib>
+#include <iostream>
 
 namespace ft
 {
@@ -233,7 +234,96 @@ namespace ft
 					rightRotate(node._right);
 					leftRotate(node);
 				}
+				/*
+				**
+				**	SEARCH
+				**
+				*/
+				Node searchNode(int key)
+				{
+					Node node = _root;
+					while (node != NULL) {
+						if (key == node.data) {
+							return node;
+						} else if (key < node.data) {
+							node = node.left;
+						} else {
+							node = node.right;
+						}
+					}
+					return (NULL);
+				}
+				/*
+				 **
+				 **		DELETION
+				 **
+				 */
+				void deleteNode(int key) {
+					Node node = _root;
 
+					// Find the node to be deleted
+					while (node != NULL && node.data != key) {
+						// Traverse the tree to the left or right depending on the key
+						if (key < node.data) {
+							node = node.left;
+						} else {
+							node = node.right;
+						}
+					}
+
+					// Node not found?
+					if (node == NULL) {
+						return;
+					}
+
+					// At this point, "node" is the node to be deleted
+
+					// In this variable, we'll store the node at which we're going to start to fix the R-B
+					// properties after deleting a node.
+					Node movedUpNode;
+					bool deletedNodeColorIsBlack;
+
+					// Node has zero or one child
+					if (node.left == NULL || node.right == NULL) {
+						movedUpNode = deleteNodeWithZeroOrOneChild(node);
+						deletedNodeColorIsBlack = node._black;
+					}
+
+					// Node has two children
+					else {
+						// Find minimum node of right subtree ("inorder successor" of current node)
+						Node inOrderSuccessor = findMinimum(node.right);
+
+						// Copy inorder successor's data to current node (keep its color!)
+						node.data = inOrderSuccessor.data;
+
+						// Delete inorder successor just as we would delete a node with 0 or 1 child
+						movedUpNode = deleteNodeWithZeroOrOneChild(inOrderSuccessor);
+						deletedNodeColorIsBlack = inOrderSuccessor.color;
+					}
+
+					if (deletedNodeColorIsBlack == true) {
+						fixRedBlackPropertiesAfterDelete(movedUpNode);
+
+						// Remove the temporary NIL node
+						if (movedUpNode.getClass() == NilNode.class) {
+							replaceParentsChild(movedUpNode.parent, movedUpNode, NULL);
+						}
+					}
+				}
+				void replaceParentsChild(Node parent, Node oldChild, Node newChild)
+				{
+					if (parent == NULL)
+						_root = newChild;
+					else if (parent.left == oldChild)
+						parent.left = newChild;
+					else if (parent.right == oldChild)
+						parent.right = newChild;
+					else
+						throw new std::invalid_argument("Node is not a child of its parent");
+					if (newChild != NULL)
+						newChild.parent = parent;
+				}
 		};
 };
 
