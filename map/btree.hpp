@@ -43,7 +43,7 @@ namespace ft
 			public:
 				void	add(value_type value)
 				{
-					Node =  Node(value);
+					Node node =  Node(value);
 					if (_root == NULL)
 					{
 						_root = node;

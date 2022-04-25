@@ -3,7 +3,6 @@
 
 # include <memory>
 # include "type_traits.hpp"
-# include "vectorIterator.hpp"
 # include "utils.hpp"
 # include <iostream>
 
@@ -40,15 +39,17 @@ namespace ft
 
 						iterator& operator=(const iterator &rhs)		{_ptr = rhs._ptr; return *this;};
 						iterator& operator++()							{_ptr = _ptr + 1; return *this;};
-						iterator operator++(int n)						{(void)n; iterator tmp(*this); _ptr = _ptr + 1; return tmp;};
+						iterator operator++(int)						{iterator tmp(*this); _ptr = _ptr + 1; return tmp;};
 						iterator& operator--()							{_ptr = _ptr - 1; return *this;};
-						iterator operator--(int n)						{(void)n; iterator tmp(*this); _ptr = _ptr - 1; return tmp;};
+						iterator operator--(int)						{iterator tmp(*this); _ptr = _ptr - 1; return tmp;};
 						iterator& operator+=(size_type n)				{_ptr = _ptr + n; return *this;};
-						iterator operator+(size_type n) const			{iterator tmp(*this); tmp._ptr = tmp._ptr + n; return tmp;};
+						iterator operator +(size_type n) const			{ return (iterator(_ptr + n)); }; // a + n
 						iterator& operator-=(size_type n)				{_ptr = _ptr - n; return *this;};
-						iterator operator-(size_type n) const			{iterator tmp(*this); tmp._ptr = tmp._ptr - n; return tmp;};
+						iterator operator-(size_type n) const			{return (iterator(_ptr - n));};
 						difference_type operator-(iterator rhs) const	{return (_ptr - rhs._ptr);};
 						friend iterator operator+(size_type n, const iterator& rhs);
+
+						difference_type operator +(iterator b) { return (_ptr + b._ptr); };
 
 						bool operator==(const iterator& rhs) const		{return (_ptr == rhs._ptr);};
 						bool operator!=(const iterator& rhs) const		{return !(operator==(rhs));};
@@ -61,7 +62,7 @@ namespace ft
 						reference operator*() const						{return *_ptr;};
 						pointer	operator&()	const						{return _ptr;};
 						pointer operator->() const						{return _ptr;};
-						reference operator[](difference_type n) const	{return (*(operator+(n)));};
+						reference operator[](difference_type n) const	{return *(_ptr + n);};
 
 				};
 				class const_iterator
@@ -95,6 +96,7 @@ namespace ft
 						const_iterator operator-(size_type n) const				{const_iterator tmp(*this); tmp._ptr = tmp._ptr - n; return tmp;};
 						difference_type operator-(const_iterator rhs) const		{return (_ptr - rhs._ptr);};
 						friend const_iterator operator+(size_type n, const const_iterator& rhs);
+
 
 						bool operator==(const const_iterator& rhs) const		{return (_ptr == rhs._ptr);};
 						bool operator!=(const const_iterator& rhs) const		{return !(operator==(rhs));};
