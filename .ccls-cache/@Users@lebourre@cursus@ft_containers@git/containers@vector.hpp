@@ -254,7 +254,7 @@ namespace ft
 				template <class InputIterator>
 					vector (InputIterator first, InputIterator last,
 							const allocator_type& alloc = allocator_type(),
-							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = NULL)
+							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = u_nullptr)
 					: _alloc(alloc), _capacity(0), _size(0)
 					{
 						assign(first, last);
@@ -552,7 +552,7 @@ namespace ft
 				};
 				template <class InputIterator>
 					void insert (iterator position, InputIterator first, InputIterator last,
-							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = void(0))
+							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = u_nullptr)
 					{
 						size_type	pos_size_t = position - begin();
 						size_type	n = 0;
