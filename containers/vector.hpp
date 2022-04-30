@@ -2,8 +2,9 @@
 # define FT_VECTOR_HPP
 
 # include <memory>
-# include "type_traits.hpp"
-# include "utils.hpp"
+# include "utils/type_traits.hpp"
+# include "utils/utils.hpp"
+# include "utils/random_access_iterator.hpp"
 # include <iostream>
 
 namespace ft
@@ -12,14 +13,19 @@ namespace ft
 		class vector
 		{
 			public:
-				typedef	A allocator_type;
-				typedef typename A::value_type		value_type;
-				typedef typename A::pointer			pointer;
-				typedef typename A::reference		reference;
-				typedef typename A::const_reference const_reference;
-				typedef size_t						size_type;
-				typedef	std::ptrdiff_t				difference_type;
-
+				typedef T														value_type;
+				typedef	A														allocator_type;
+				typedef typename A::reference									reference;
+				typedef typename A::const_reference								const_reference;
+				typedef typename A::pointer										pointer;
+				typedef typename A::const_pointer								const_pointer;
+				typedef	typename ft::random_access_iterator<value_type>			iterator;
+				typedef	typename ft::random_access_iterator<const value_type>	const_iterator;
+				typedef typename ft::reverse_iterator<iterator>					reverse_iterator;
+				typedef typename ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+				typedef	std::ptrdiff_t											difference_type;
+				typedef size_t													size_type;
+/*
 				class	const_iterator;
 				class	iterator
 				{
@@ -60,7 +66,7 @@ namespace ft
 						bool operator<=(const iterator& rhs) const		{return (operator==(rhs) || operator<(rhs));};
 						bool operator>=(const iterator& rhs) const		{return  (operator==(rhs) || operator>(rhs));};
 
-						/* COMPARE WITH CONST_ITERATOR*/
+				//		 COMPARE WITH CONST_ITERATOR
 						bool operator==(const const_iterator& rhs) const		{return (_ptr == rhs._ptr);};
 						bool operator!=(const const_iterator& rhs) const		{return !(operator==(rhs));};
 						bool operator<(const const_iterator& rhs) const		{return (_ptr < rhs._ptr);};
@@ -75,6 +81,7 @@ namespace ft
 						reference operator[](difference_type n) const	{return *(_ptr + n);};
 
 				};
+			//	class iterator;
 							class const_iterator
 				{
 					private:
@@ -87,6 +94,7 @@ namespace ft
 						typedef typename A::const_reference reference;
 						typedef typename A::const_pointer pointer;
 						typedef typename A::pointer n_const_pointer;
+						typedef typename A::reference n_const_reference;
 						typedef std::random_access_iterator_tag iterator_categ;
 
 						const_iterator(void) : _ptr(NULL)						{};
@@ -122,6 +130,18 @@ namespace ft
 						bool operator<=(const iterator& rhs) const		{return (operator==(rhs) || operator<(rhs));};
 						bool operator>=(const iterator& rhs) const		{return  (operator==(rhs) || operator>(rhs));};
 
+						reference operator*() const								{return *_ptr;};
+						pointer	operator&()	const								{return _ptr;};
+						pointer operator->() const								{return _ptr;};
+						reference operator[](size_type n) const					{return _ptr + n;};
+
+				};
+				class	iterator : public const_iterator
+				{
+						typedef typename A::reference	 reference;
+						typedef typename A::pointer		pointer;
+						T* _ptr;
+					public:
 						reference operator*() const								{return *_ptr;};
 						pointer	operator&()	const								{return _ptr;};
 						pointer operator->() const								{return _ptr;};
@@ -211,7 +231,7 @@ namespace ft
 						pointer operator->() const												{return _ptr;};
 						reference operator[](size_type n) const									{return _ptr - n;};
 
-				};
+				};*/
 			private:
 				value_type		*_vector;
 				allocator_type	_alloc;
@@ -234,7 +254,7 @@ namespace ft
 				template <class InputIterator>
 					vector (InputIterator first, InputIterator last,
 							const allocator_type& alloc = allocator_type(),
-							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = u_nullptr)
+							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = NULL)
 					: _alloc(alloc), _capacity(0), _size(0)
 					{
 						assign(first, last);
@@ -250,10 +270,6 @@ namespace ft
 					this->clear();
 				//	_alloc.deallocate(_vector, _capacity);
 				};
-				void	printStatus()
-				{
-					std::cout << "size == " << _size << std::endl << "capacity == " << _capacity << std::endl;
-				}
 				/*
 				 * ITERATORS
 				 */
@@ -536,7 +552,7 @@ namespace ft
 				};
 				template <class InputIterator>
 					void insert (iterator position, InputIterator first, InputIterator last,
-							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = u_nullptr)
+							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type* = void(0))
 					{
 						size_type	pos_size_t = position - begin();
 						size_type	n = 0;
@@ -637,31 +653,6 @@ namespace ft
 					erase(begin(), end());
 				};
 		};
-
-	template<typename T, class A>
-		typename ft::vector<T, A> ::iterator::difference_type
-		operator+(typename ft::vector<T, A>::iterator::difference_type n, typename ft::vector<T, A>::iterator& it)
-	{
-		return (&(*it) + n);
-	}
-	template<typename T, class A>
-	typename ft::vector<T, A>::iterator::difference_type
-	operator-(typename ft::vector<T, A>::iterator::difference_type n, typename ft::vector<T, A>::iterator& it)
-	{
-		return (n - &(*it));
-	}
-	template<typename T, class A>
-	typename ft::vector<T, A> ::const_iterator::difference_type
-	operator+(typename ft::vector<T, A>::const_iterator::difference_type n, typename ft::vector<T, A>::const_iterator& it)
-	{
-		return (&(*it) + n);
-	}/*
-	template<typename T, class A>
-	typename ft::vector<T, A>::iterator::difference_type
-	operator-(typename ft::vector<T, A>::iterator::difference_type n, typename ft::vector<T, A>::iterator& it)
-	{
-		return (n - &(*it));
-	}*/
 
 }
 #endif

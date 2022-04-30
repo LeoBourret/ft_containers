@@ -1,12 +1,13 @@
 #ifndef ITERATORS_TRAITS_HPP
 # define ITERATORS_TRAITS_HPP
 
-#include <iterator>
+# include <cstddef>
+# include "utils.hpp"
 
 namespace ft
 {
 	template <class Iterator>
-		class iterator_traits
+		struct iterator_traits
 		{
 			public:
 				typedef typename Iterator::difference_type		difference_type;
@@ -16,25 +17,25 @@ namespace ft
 				typedef typename Iterator::iterator_category	iterator_category;
 		};
 	template <class T>
-		class iterator_traits<T*>
+		struct iterator_traits<T*>
 		{
 			public:
 				typedef ptrdiff_t						difference_type;
 				typedef T								value_type;
 				typedef T*								pointer;
 				typedef T&								reference;
-				typedef std::random_access_iterator_tag	iterator_category;
+				typedef ft::random_access_iterator_tag	iterator_category;
 
 		};
 	template <class T>
-		class iterator_traits<const T*>
+		struct iterator_traits<const T*>
 		{
 			public:
 				typedef ptrdiff_t						difference_type;
 				typedef T								value_type;
 				typedef const T*						pointer;
 				typedef const T&						reference;
-				typedef std::random_access_iterator_tag	iterator_category;
+				typedef ft::random_access_iterator_tag	iterator_category;
 
 		};
 }

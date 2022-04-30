@@ -13,12 +13,12 @@ namespace ft
 		{
 			public:
 				typedef	A allocator_type;
-				typedef typename A::value_type		value_type;
+				typedef typename T					value_type;
+				typedef	std::ptrdiff_t				difference_type;
 				typedef typename A::pointer			pointer;
 				typedef typename A::reference		reference;
 				typedef typename A::const_reference const_reference;
 				typedef size_t						size_type;
-				typedef	std::ptrdiff_t				difference_type;
 
 				class	const_iterator;
 				class	iterator
@@ -60,7 +60,7 @@ namespace ft
 						bool operator<=(const iterator& rhs) const		{return (operator==(rhs) || operator<(rhs));};
 						bool operator>=(const iterator& rhs) const		{return  (operator==(rhs) || operator>(rhs));};
 
-						/* COMPARE WITH CONST_ITERATOR*/
+				//		 COMPARE WITH CONST_ITERATOR
 						bool operator==(const const_iterator& rhs) const		{return (_ptr == rhs._ptr);};
 						bool operator!=(const const_iterator& rhs) const		{return !(operator==(rhs));};
 						bool operator<(const const_iterator& rhs) const		{return (_ptr < rhs._ptr);};
@@ -75,6 +75,7 @@ namespace ft
 						reference operator[](difference_type n) const	{return *(_ptr + n);};
 
 				};
+			//	class iterator;
 							class const_iterator
 				{
 					private:
@@ -87,6 +88,7 @@ namespace ft
 						typedef typename A::const_reference reference;
 						typedef typename A::const_pointer pointer;
 						typedef typename A::pointer n_const_pointer;
+						typedef typename A::reference n_const_reference;
 						typedef std::random_access_iterator_tag iterator_categ;
 
 						const_iterator(void) : _ptr(NULL)						{};
@@ -114,20 +116,32 @@ namespace ft
 						bool operator>(const const_iterator& rhs) const			{return (_ptr > rhs.ptr);};
 						bool operator<=(const const_iterator& rhs) const		{return (operator==(rhs) || operator<(rhs));};
 						bool operator>=(const const_iterator& rhs) const		{return  (operator==(rhs) || operator>(rhs));};
-
+/*
 						bool operator==(const iterator& rhs) const		{return (_ptr == rhs._ptr);};
 						bool operator!=(const iterator& rhs) const		{return !(operator==(rhs));};
 						bool operator<(const iterator& rhs) const		{return (_ptr < rhs._ptr);};
 						bool operator>(const iterator& rhs) const		{return (_ptr > rhs.ptr);};
 						bool operator<=(const iterator& rhs) const		{return (operator==(rhs) || operator<(rhs));};
 						bool operator>=(const iterator& rhs) const		{return  (operator==(rhs) || operator>(rhs));};
-
+*/
 						reference operator*() const								{return *_ptr;};
 						pointer	operator&()	const								{return _ptr;};
 						pointer operator->() const								{return _ptr;};
 						reference operator[](size_type n) const					{return _ptr + n;};
 
-				};
+				};/*
+				class	iterator : public const_iterator
+				{
+						typedef typename A::reference	 reference;
+						typedef typename A::pointer		pointer;
+						T* _ptr;
+					public:
+						reference operator*() const								{return *_ptr;};
+						pointer	operator&()	const								{return _ptr;};
+						pointer operator->() const								{return _ptr;};
+						reference operator[](size_type n) const					{return _ptr + n;};
+
+				};*/
 				class	reverse_iterator
 				{
 					private:
@@ -250,10 +264,6 @@ namespace ft
 					this->clear();
 				//	_alloc.deallocate(_vector, _capacity);
 				};
-				void	printStatus()
-				{
-					std::cout << "size == " << _size << std::endl << "capacity == " << _capacity << std::endl;
-				}
 				/*
 				 * ITERATORS
 				 */

@@ -5,19 +5,19 @@
 
 namespace ft
 {
-	template <typename T, class A = std::allocator<T> >
+	template <typename T>
 	class	iterator
 	{
 		private:
 			T*	_ptr;
 
 		public:
-			typedef A										allocator_type;
-			typedef typename A::value_type					value_type;
-			typedef typename A::reference					reference;
-			typedef typename A::difference_type				difference_type;
-			typedef typename A::size_type					size_type;
-			typedef typename A::pointer						pointer;
+			typedef typename T::allocator_type				allocator_type;
+			typedef T										value_type;
+			typedef typename T::reference					reference;
+			typedef typename T::difference_type				difference_type;
+			typedef typename T::size_type					size_type;
+			typedef typename T::pointer						pointer;
 			typedef std::random_access_iterator_tag			iterator_category;
 
 			iterator(void) : _ptr(NULL)						{};
