@@ -7,7 +7,7 @@
 # include <sstream>
 # include <typeinfo>
 # include <iostream>
-/*
+
 static class nullptr_t
 {
     public:
@@ -22,7 +22,7 @@ static class nullptr_t
                void operator&() const;
 
 } u_nullptr = {};
-*/
+
 namespace ft
 {
     class bidirectional_iterator_tag { };
