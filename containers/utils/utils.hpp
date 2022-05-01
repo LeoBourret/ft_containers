@@ -135,7 +135,7 @@ namespace ft
 			typedef	typename	ft::iterator_traits<Iterator>::reference			reference;
 
 			reverse_iterator(void) : _ptr(NULL)							{};
-			reverse_iterator(const reverse_iterator &src)				{_ptr = src->_ptr;};
+			reverse_iterator(const reverse_iterator &src) : _ptr(src._ptr)				{};
 			~reverse_iterator()											{};
 
 			reverse_iterator& operator=(const reverse_iterator &rhs)	{_ptr = rhs->_ptr; return *this;};
