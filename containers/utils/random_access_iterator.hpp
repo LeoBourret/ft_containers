@@ -46,7 +46,7 @@ namespace ft
 			bool operator==(const random_access_iterator& rhs) const	{return (_ptr == rhs._ptr);};
 			bool operator!=(const random_access_iterator& rhs) const	{return !(operator==(rhs));};
 			bool operator<(const random_access_iterator& rhs) const		{return (_ptr < rhs._ptr);};
-			bool operator>(const random_access_iterator& rhs) const		{return (_ptr > rhs.ptr);};
+			bool operator>(const random_access_iterator& rhs) const		{return (_ptr > rhs._ptr);};
 			bool operator<=(const random_access_iterator& rhs) const	{return (operator==(rhs) || operator<(rhs));};
 			bool operator>=(const random_access_iterator& rhs) const	{return  (operator==(rhs) || operator>(rhs));};
 
