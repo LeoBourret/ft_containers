@@ -22,8 +22,6 @@ namespace ft
 			random_access_iterator(const random_access_iterator &src) : _ptr(src._ptr)	{};
 			random_access_iterator& operator=(const random_access_iterator &rhs)
 			{
-				if (this == rhs)
-					return (*this);
 				_ptr = rhs._ptr;
 				return *this;
 			};
@@ -48,7 +46,7 @@ namespace ft
 			bool operator==(const random_access_iterator& rhs) const	{return (_ptr == rhs._ptr);};
 			bool operator!=(const random_access_iterator& rhs) const	{return !(operator==(rhs));};
 			bool operator<(const random_access_iterator& rhs) const		{return (_ptr < rhs._ptr);};
-			bool operator>(const random_access_iterator& rhs) const		{return (_ptr > rhs.ptr);};
+			bool operator>(const random_access_iterator& rhs) const		{return (_ptr > rhs._ptr);};
 			bool operator<=(const random_access_iterator& rhs) const	{return (operator==(rhs) || operator<(rhs));};
 			bool operator>=(const random_access_iterator& rhs) const	{return  (operator==(rhs) || operator>(rhs));};
 

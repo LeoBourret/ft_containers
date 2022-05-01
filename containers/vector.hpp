@@ -5,6 +5,7 @@
 # include "utils/type_traits.hpp"
 # include "utils/utils.hpp"
 # include "utils/random_access_iterator.hpp"
+# include "utils/lexicographical_compare.hpp"
 # include <iostream>
 
 namespace ft
@@ -476,7 +477,8 @@ namespace ft
 							}
 							_alloc.construct(&tmp[pos_size_t], val);
 							for (size_type i = pos_size_t - 1; i >= 0; --i)
-							{
+							 :diffget //3
+
 								if (i > max_size())
 									break ;
 								_alloc.construct(&tmp[i], _vector[i]);
@@ -653,6 +655,48 @@ namespace ft
 					erase(begin(), end());
 				};
 		};
+	template <class T, class Alloc>
+		bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return (false);
+		typename ft::vector<T>::const_iterator flhs = lhs.begin();
+		typename ft::vector<T>::const_iterator frhs = rhs.begin();
+		while (flhs != lhs.end())
+		{
+			if (frhs == rhs.end() || *flhs != *frhs)
+				return (false);
+			flhs++;
+			frhs++;
+		}
+		return (true);
+	}
+	template <class T, class Alloc>
+		bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (!(lhs == rhs));
+	}
+	template <class T, class Alloc>
+		bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+	template <class T, class Alloc>
+		bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (!(lhs < rhs));
+	}
+	template <class T, class Alloc>
+		bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (rhs < lhs);
+	}
+	template <class T, class Alloc>
+		bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (!(rhs < lhs));
+	}
+
 
 }
 #endif
