@@ -291,19 +291,19 @@ namespace ft
 				}
 				reverse_iterator rbegin()
 				{
-					return (ft::vector<T, A>::reverse_iterator(&_vector[_size - 1]));
+					return (reverse_iterator(this->end()));
 				};
 				const_reverse_iterator rbegin() const
 				{
-					return (ft::vector<T, A>::const_reverse_iterator(&_vector[_size - 1]));
+					return (const_reverse_iterator(this->end()));
 				};
 				reverse_iterator rend()
 				{
-					return (ft::vector<T, A>::reverse_iterator(&_vector[-1]));
+					return (reverse_iterator(this->begin()));
 				};
 				const_reverse_iterator rend() const
 				{
-					return (ft::vector<T, A>::const_reverse_iterator(&_vector[-1]));
+					return (const_reverse_iterator(this->begin()));
 				};
 
 				/*
