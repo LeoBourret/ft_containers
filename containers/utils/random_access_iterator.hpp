@@ -22,7 +22,7 @@ namespace ft
 			random_access_iterator(const random_access_iterator &src) : _ptr(src._ptr)	{};
 			random_access_iterator& operator=(const random_access_iterator &rhs)
 			{
-				if (this == &rhs)
+				if (this == rhs)
 					return (*this);
 				_ptr = rhs._ptr;
 				return *this;
