@@ -65,7 +65,7 @@ namespace ft
 					_node_alloc.deallocate(_management_node, 1);
 				}
 
-				void	add(value_type val)
+				Node	*add(value_type val)
 				{
 					Node *node =  _node_alloc.allocate(1);
 					_node_alloc.construct(node, Node(val));
@@ -79,9 +79,10 @@ namespace ft
 						_management_node->parent = _root;
 						_management_node->right = _root;
 						_management_node->left = _root;
-						return ;
+						return _root;
 					}
-					add(_root, node);
+					if(!add(_root, node))
+						return NULL;
 					checkColor(node);
 					_size++;
 					if (isMinimum(node))
@@ -90,9 +91,10 @@ namespace ft
 						updateMaximum(node);
 					_management_node->value.first += 1;
 					ft::node<Pair>::DG_tree(_root);
+					return node;
 				}
 
-				void deleteNode(int key)
+				size_type deleteNode(value_type val)
 				{
 					// In this variable, we'll store the node at which we're going to start to fix the R-B
 					// properties after deleting a node.
@@ -102,10 +104,10 @@ namespace ft
 					Node *node = _root;
 
 					// Find the node to be deleted
-					while (node != NULL && node->data != key)
+					while (node != NULL && node->val.first != val.first)
 					{
 						// Traverse the tree to the left or right depending on the key
-						if (key < node->data)
+						if (Compare(val < node->val))
 							node = node->left;
 						else
 							node = node->right;
@@ -113,7 +115,7 @@ namespace ft
 
 					// Node not found?
 					if (node == NULL)
-						return;
+						return 0;
 					// At this point, "node" is the node to be deleted
 
 
@@ -131,7 +133,7 @@ namespace ft
 						Node *inOrderSuccessor = findMinimum(node->right);
 
 						// Copy inorder successor's data to current node (keep its.black!)
-						node->data = inOrderSuccessor->data;
+						node->val.second = inOrderSuccessor->val.second;
 
 						// Delete inorder successor just as we would delete a node with 0 or 1 child
 						movedUpNode = deleteNodeWithZeroOrOneChild(inOrderSuccessor);
@@ -146,6 +148,7 @@ namespace ft
 							replaceParentsChild(movedUpNode->parent, movedUpNode, NULL);
 					}
 					_management_node->value.first -= 1;
+					return (1);
 				}
 
 				size_type max_size() const
@@ -158,8 +161,10 @@ namespace ft
 					return (val1 > val2);
 				}
 
-				void	add(Node *parent, Node *newNode)
+				Node	*add(Node *parent, Node *newNode)
 				{
+					if (newNode->val->first == parent->val->first)
+						return NULL;
 					if (compare(newNode->val, parent->val))
 					{
 						if (parent->right == NULL)
@@ -167,7 +172,7 @@ namespace ft
 							parent->right = newNode;
 							newNode->parent = parent;
 							newNode->isLeftChild = false;
-							return ;
+							return newNode;
 						}
 						return add(parent->right, newNode);
 					}
@@ -176,7 +181,7 @@ namespace ft
 						parent->left = newNode;
 						newNode->parent = parent;
 						newNode->isLeftChild = true;
-						return ;
+						return newNode;
 					}
 					return add(parent->left, newNode);
 				}

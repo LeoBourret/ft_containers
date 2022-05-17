@@ -198,6 +198,18 @@ namespace ft
 	template <class Iterator_L, class Iterator_R>
 		typename reverse_iterator<Iterator_L>::difference_type operator- (const reverse_iterator<Iterator_L>& lhs,
 				const reverse_iterator<Iterator_R>& rhs) { return (rhs.base() - lhs.base()); }
+
+	/* SWAP */
+	template <class T>
+	void	swap(T &a, T &b)
+	{
+		T tmp(a);
+
+		a = b;
+		b = tmp;
+	}
 }
+
+
 
 #endif

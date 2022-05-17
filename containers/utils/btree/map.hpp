@@ -149,13 +149,73 @@ namespace ft
 
 		/* Modifiers function */
 
-		pair<iterator,bool> insert (const value_type& val);
+		ft::pair<iterator,bool> insert (const value_type& val)
+		{
 
-		iterator insert (iterator position, const value_type& val);
+			iterator it;
+			if (this->count(val.first))
+			{
+				it = this->find(val.first);
+				return ft::make_pair(it, false);
+			}
+			it = iterator(this->add(val));
+			return (ft::make_pair(it, true));
+		};
+
+		iterator insert (iterator position, const value_type& val)
+		{
+			(void)position;
+			return (this->insert(val).first);
+		};
 
 		template <class InputIterator>
-			void insert (InputIterator first, InputIterator last);
+			void insert (InputIterator first, InputIterator last)
+			{
+				while (first != last)
+					this->insert(*first++);
+			};
 
+		void erase (iterator position)
+		{
+			_rbt.deleteNode(*position._ptr._pair.first);
+		};
+
+
+		size_type erase (const key_type& k)
+		{
+			return (_rbt.deleteNode(k));
+		};
+
+		void erase (iterator first, iterator last)
+		{
+			for (iterator it = ++first; it != last; it++)
+				this->erase(it);
+		};
+
+		void	swap(map &x)
+		{
+			ft::swap(_alloc, x._alloc);
+			ft::swap(_comp, x._comp);
+			ft::swap(_rbt, x._rbt);
+		};
+
+		void	clear(void)
+		{
+			iterator first = this->begin();
+
+			for (iterator it = ++first; it != this->end(); it++)
+				this->erase(it);
+		};
+
+		key_compare	key_comp() const
+		{
+			return (key_compare());
+		};
+
+		value_compare value_comp() const
+		{
+			return (value_compare(_comp));
+		};
 	};
 }
 
