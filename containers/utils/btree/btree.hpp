@@ -44,8 +44,10 @@ namespace ft
 			private:
 				Node		*_root;
 				/**
-				 * @Brief _management_node will be used to manage end() begin()
-				 *	and to manage the overall tree traversal when reaching minimum and maximum node.
+				 * _management_node will be used to manage end() begin()
+				 *	it will store the minimum node at his left pointer, maxium
+				 *	node at his right pointer. It will also contain the size
+				 *	of the three at his key value.
 				*/
 				Node		*_management_node;
 				size_type	_size;
@@ -54,7 +56,7 @@ namespace ft
 
 			public:
 				Rb_tree(const node_alloc& node_alloc_init = node_alloc())
-				:	_node_alloc(node_alloc_init)
+				:	_root(NULL), _node_alloc(node_alloc_init)
 				{
 					_management_node = _node_alloc.allocate(1);
 					_node_alloc.construct(_management_node, Node(_management_node, _management_node, _management_node));
@@ -74,6 +76,7 @@ namespace ft
 						_root = node;
 						_root->black = true;
 						_size++;
+						_management_node->value.first += 1;
 						_root->right = _management_node;
 						_root->left = _management_node;
 						_management_node->parent = _root;
@@ -94,42 +97,36 @@ namespace ft
 					return node;
 				}
 
-				size_type deleteNode(value_type val)
+				size_type deleteNode(value_type pair)
 				{
-					// In this variable, we'll store the node at which we're going to start to fix the R-B
-					// properties after deleting a node.
+					/**
+					 * In this variable, we'll store the node at which we're going to start to fix the R-B
+					 * properties after deleting a node.
+					*/
 					Node *movedUpNode;
 					bool deletedNodeColorIsBlack;
-
 					Node *node = _root;
-
-					// Find the node to be deleted
-					while (node != NULL && node->val.first != val.first)
+					/* Find the node to be deleted */
+					while (node != NULL && node != _management_node && node->val.first != pair.first)
 					{
-						// Traverse the tree to the left or right depending on the key
-						if (Compare(val < node->val))
+						if (pair.first < node->val.first)
 							node = node->left;
 						else
 							node = node->right;
 					}
-
-					// Node not found?
 					if (node == NULL)
 						return 0;
-					// At this point, "node" is the node to be deleted
-
-
-					// Node has zero or one child
-					if (node->left == NULL || node->right == NULL)
+					/* Node has zero or one child */
+					if (node->left == NULL || node->left == _management_node
+						|| node->right == NULL || node->right == _management_node)
 					{
 						movedUpNode = deleteNodeWithZeroOrOneChild(node);
 						deletedNodeColorIsBlack = node->black;
 					}
 
-					// Node has two children
+					/* Node has two children */
 					else
 					{
-						// Find minimum node of right subtree ("inorder successor" of current node)
 						Node *inOrderSuccessor = findMinimum(node->right);
 
 						// Copy inorder successor's data to current node (keep its.black!)
@@ -142,8 +139,6 @@ namespace ft
 					if (deletedNodeColorIsBlack == true)
 					{
 						fixRedBlackPropertiesAfterDelete(movedUpNode);
-
-						// Remove the temporary NIL node
 						if (movedUpNode->_isDoubleBlack == true)
 							replaceParentsChild(movedUpNode->parent, movedUpNode, NULL);
 					}
@@ -167,19 +162,30 @@ namespace ft
 						return NULL;
 					if (compare(newNode->val, parent->val))
 					{
-						if (parent->right == NULL)
+						if (parent->right == NULL || parent->right == _management_node)
 						{
 							parent->right = newNode;
 							newNode->parent = parent;
+							if (parent->right == _management_node)
+							{
+								newNode->right = _management_node;
+								_management_node->right = newNode;
+							}
 							newNode->isLeftChild = false;
 							return newNode;
 						}
 						return add(parent->right, newNode);
 					}
-					if (parent->left == NULL)
+					if (parent->left == NULL || parent->left == _management_node)
 					{
 						parent->left = newNode;
 						newNode->parent = parent;
+						if (parent->left == _management_node)
+							{
+								newNode->left = _management_node;
+								_management_node->left = newNode;
+							}
+
 						newNode->isLeftChild = true;
 						return newNode;
 					}
@@ -189,7 +195,7 @@ namespace ft
 				/*		TOOLS		*/
 				Node *findMinimum(Node *node)
 				{
-					while (node->left != NULL)
+					while (node->left != _management_node)
 						node = node->left;
 					return node;
 				}
@@ -198,7 +204,7 @@ namespace ft
 				{
 					Node minimum = _root;
 
-					while (minimum->left)
+					while (minimum->left != _management_node)
 						minimum = minimum->left;
 					return (node == minimum);
 				}
@@ -242,11 +248,7 @@ namespace ft
 				{
 					return node == NULL || node.black == true;
 				}
-				/*
-				**
-				**		CHECK AND FIX TREE
-				**
-				*/
+				/*	CHECK AND FIX TREE	*/
 				void	checkColor(Node *node)
 				{
 					if (node == _root)
@@ -258,21 +260,27 @@ namespace ft
 
 				void	correctTree(Node *node)
 				{
-					// AUNT IS GRANDPARENT.RIGHT
+					/* AUNT IS GRANDPARENT->RIGHT	*/
 					if (node->parent->isLeftChild)
 					{
-						if (node->parent->parent->right == NULL || node->parent->parent->right->black)
+						if (node->parent->parent->right == NULL
+							|| node->parent->parent->right == _management_node
+							|| node->parent->parent->right->black)
 							return (rotate(node));
 					}
-					if (node->parent->parent->right != NULL)
+					if (node->parent->parent->right != NULL
+						|| node->parent->right != _management_node)
 						node->parent->right->black = true;
 					node->parent->parent->black = false;
 					node->parent->black = true;
 					return ;
-					// AUNT IS GRANDPARENT.LEFT
-					if (node->parent->parent->left == NULL || node->parent->parent->left->black)
+					/* AUNT IS GRANDPARENT.LEFT	*/
+					if (node->parent->parent->left == NULL
+							|| node->parent->parent->left == _management_node
+							|| node->parent->parent->left->black)
 							return (rotate(node));
-					if (node->parent->parent->left != NULL)
+					if (node->parent->parent->left != NULL
+						|| node->parent->parent->left != _management_node)
 						node->parent->left->black = true;
 					node->parent->parent->black = false;
 					node->parent->black = true;
@@ -288,7 +296,8 @@ namespace ft
 							rightRotate(node->parent->parent);
 							node->black = false;
 							node->parent->black = true;
-							if (node->parent->right != NULL)
+							if (node->parent->right != NULL
+								|| node->parent->right != _management_node)
 								node->parent->right->black = false;
 						}
 						return ;
@@ -334,11 +343,10 @@ namespace ft
 						node->right->parent = node;
 						node->right->isLeftChild = false;
 					}
-					if (node->parent == NULL)
+					if (node->parent == _management_node)
 					{
-						//NODE IS ROOT
 						_root = tmp;
-						tmp->parent = NULL;
+						tmp->parent = _management_node;
 					}
 					else
 					{
@@ -438,14 +446,7 @@ namespace ft
 				{
 					// Case 1: Examined node is root, end of recursion
 					if (node == _root)
-					{
-						/**
-						 * Uncomment the following line if you want to enforce black roots (rule 2):
-						 * node.color = BLACK;
-						*/
 						return;
-					}
-
 					Node *sibling = getSibling(node);
 
 					/* Case 2: Red sibling */
