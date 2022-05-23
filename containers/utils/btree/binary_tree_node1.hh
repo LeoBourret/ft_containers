@@ -6,7 +6,7 @@
 /*   By: matthieu <matthieu.escande@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/22 18:45:02 by matthieu          #+#    #+#             */
-/*   Updated: 2022/05/09 13:06:59 by lebourre         ###   ########.fr       */
+/*   Updated: 2022/05/19 11:04:35 by lebourre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # define RED 0
 # define BLACK 1
 # define SENTINEL 2
+#include "pair.hpp"
 
 namespace ft {
 	template<class T>
@@ -42,9 +43,8 @@ namespace ft {
 /* ************************************************************************** */
 
 		public:
-			node(value_type const &v = value_type()) : color(BLACK), left(NULL), right(NULL), parent(NULL), black(false), isLeftChild(false), isDoubleBlack(false) {
-				val = v;
-			}
+			node(value_type const &v = value_type()) : val(v), color(BLACK), left(NULL), right(NULL), parent(NULL), isLeftChild(false), black(false), isDoubleBlack(false) {}
+
 			operator	node<const value_type>() const {
 				return node<const value_type >(val);
 			}
