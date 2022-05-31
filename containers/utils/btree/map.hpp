@@ -1,8 +1,8 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 
-# include "btree.hpp"
-# include "bidirectional_iterator.hpp"
+# include "rbtree.hpp"
+//# include "bidirectional_iterator.hpp"
 # include "pair.hpp"
 # include "../utils.hpp"
 # include <cstddef>
@@ -41,6 +41,7 @@ namespace ft
 			public:
 				bool operator() (const value_type& x, const value_type& y) const
 				{ return (comp(x.first, y.first)); }
+
 		};
 
 		typedef	Alloc																allocator_type;
@@ -48,17 +49,17 @@ namespace ft
 		typedef typename allocator_type::const_reference							const_reference;
 		typedef typename allocator_type::pointer									pointer;
 		typedef typename allocator_type::const_pointer								const_pointer;
-		typedef typename ft::bidirectional_iterator<Key, T>							iterator;
-		typedef typename ft::bidirectional_iterator<const Key, const T>				const_iterator;
+		typedef typename ft::bidirectional_iterator<value_type>						iterator;
+		typedef typename ft::const_bidirectional_iterator<value_type>				const_iterator;
 		typedef typename ft::reverse_iterator<iterator>								reverse_iterator;
 		typedef typename ft::reverse_iterator<const_iterator>						const_reverse_iterator;
 		typedef typename ft::iterator_traits<iterator>::difference_type				difference_type;
-		typedef	size_t																size_type;
+		typedef	typename Alloc::size_type											size_type;
 
 		private:
-			allocator_type								_alloc;
-			Compare										_comp;
-			Rb_tree<value_type, key_type, mapped_type>	_rbt;
+			allocator_type											_alloc;
+			Compare													_comp;
+			RedBlackTree<value_type, const key_type, mapped_type>	_rbt;
 
 		public:
 
@@ -75,32 +76,38 @@ namespace ft
 				this->insert(first, last);
 			}
 
-			map (const map& x) : _alloc(x._alloc), _comp(x._comp), _rbt()
+		map (const map& x) : _alloc(x._alloc), _comp(x._comp), _rbt(x._rbt)
 		{
-			this->insert(x.begin(), x.end());
 		}
 
-		~map() {this->clear();}
+		map &	operator= (map const & rhs)
+		{
+			this->_rbt = rhs._rbt;
+			return *this;
+		}
+
+
+		~map() {}
 
 
 		/*	Iterators functions */
 		iterator begin()
 		{
-			return (iterator(_rbt.getManagementNode()->left));
+			return (iterator(_rbt.findMin(), _rbt.getManagement(), _rbt.getLeaf()));
 		};
 
 		const_iterator begin() const
 		{
-			return (const_iterator(_rbt.getManagementNode()->left));
+			return (const_iterator(_rbt.findMin(), _rbt.getManagement(), _rbt.getLeaf()));
 		};
 
 		iterator end()
 		{
-			return (iterator(_rbt.getManagementNode()->right));
+			return (iterator(_rbt.getManagement(), _rbt.getManagement(), _rbt.getLeaf()));
 		};
 		const_iterator end() const
 		{
-			return (const_iterator(_rbt.getManagementNode()->right));
+			return (const_iterator(_rbt.getManagement(), _rbt.getManagement(), _rbt.getLeaf()));
 		};
 
 		reverse_iterator rbegin()
@@ -126,17 +133,18 @@ namespace ft
 		/* Capacity functions */
 		bool empty() const
 		{
-			return (_rbt.getManagementNode()->parent == _rbt.getManagementNode());
+			return (!_rbt.getSize() ? true : false);
 		};
 
 		size_type size() const
 		{
-			return (_rbt.getManagementNode()->value.first);
+			return (_rbt.getSize());
 		};
 
 		size_type max_size() const
 		{
-			return (_rbt.max_size());
+			std::allocator<Node<value_type> >	tmp;
+			return tmp.max_size();
 		};
 
 		/* Elemet access function */
@@ -154,14 +162,13 @@ namespace ft
 
 		ft::pair<iterator,bool> insert (const value_type& val)
 		{
-			iterator it;
 
 			if (count(val.first))
 			{
-				it = find(val.first);
+				iterator it = find(val.first);
 				return ft::make_pair(it, false);
 			}
-			it = iterator(_rbt.add(val));
+			iterator it(_rbt.insert(val), _rbt.getManagement(), _rbt.getLeaf());
 			return (ft::make_pair(it, true));
 		};
 
@@ -180,7 +187,7 @@ namespace ft
 
 		void erase (iterator position)
 		{
-			_rbt.deleteNode(*position._ptr._pair.first);
+			_rbt.deleteNode(*position);
 		};
 
 
@@ -204,10 +211,7 @@ namespace ft
 
 		void	clear(void)
 		{
-			iterator first = this->begin();
-
-			for (iterator it = ++first; it != this->end(); it++)
-				this->erase(it);
+			_rbt.clear();
 		};
 
 		key_compare	key_comp() const
@@ -224,16 +228,14 @@ namespace ft
 		{
 			iterator it;
 
-			it = iterator(_rbt.findNode(k));
-			return (it != NULL ? it : this->end());
+			it = iterator(_rbt.searchTree(k), _rbt.getManagement(), _rbt.getLeaf());
+			return (it.getNode() != _rbt.getLeaf() ? it : this->end());
 		};
 
 		const_iterator find (const key_type& k) const
 		{
-			const_iterator it(_rbt.findNode(k));
-			if (it == NULL)
-				return (this->end());
-			return (it);
+			const_iterator it(_rbt.searchTree(k), _rbt.getManagement(), _rbt.getLeaf());
+			return (it.getNode() != _rbt.getLeaf() ? it : this->end());
 		};
 
 		size_type count(const key_type &k) const
@@ -243,45 +245,51 @@ namespace ft
 			return (1);
 		};
 
-		iterator	lower_bound(const key_type &k)
+		iterator	lower_bound (key_type const & k)
 		{
-			iterator it;
+			iterator it = begin();
 
-			it = begin();
-			while (_comp(it->first, k) == false && it != end())
-				it++;
-			return (it);
-		};
+			for (iterator ite = end(); it != ite; it++) {
+				if (it->first ==k || !_comp(it->first, k))
+					return it;
+			}
+			return end();
+		}
 
-		const_iterator	lower_bound(const key_type &k) const
+		const_iterator	lower_bound (key_type const & k) const
 		{
-			const_iterator it;
+			const_iterator it = begin();
 
-			it = begin();
-			while (_comp(it->first, k) == false && it != end())
-				it++;
-			return (it);
-		};
+			for (const_iterator ite = end(); it != ite; it++) {
+				if (it->first == k || !_comp(it->first, k))
+					return it;
+			}
+			return end();
+		}
 
-		iterator	upper_bound(const key_type &k)
+		iterator	upper_bound (key_type const & k)
 		{
-			iterator it;
+			iterator it = begin();
 
-			it = begin();
-			while (_compd(k, it->first) == false && it != end())
-				it++;
-			return it;
-		};
+			for (iterator ite = end(); it != ite; it++)
+			{
+				if (it->first != k && !_comp(it->first, k))
+					return it;
+			}
+			return end();
+		}
 
-		const_iterator	upper_bound(const key_type &k) const
+		const_iterator	upper_bound (key_type const & k) const
 		{
-			const_iterator it;
+			const_iterator it = begin();
 
-			it = begin();
-			while (_compd(k, it->first) == false && it != end())
-				it++;
-			return it;
-		};
+			for (const_iterator ite = end(); it != ite; it++)
+			{
+				if (it->first != k && !_comp(it->first, k))
+					return it;
+			}
+			return end();
+		}
 
 		ft::pair<iterator, iterator> equal_range(const key_type &k)
 		{

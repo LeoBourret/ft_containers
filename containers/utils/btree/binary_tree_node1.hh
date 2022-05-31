@@ -6,7 +6,7 @@
 /*   By: matthieu <matthieu.escande@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/22 18:45:02 by matthieu          #+#    #+#             */
-/*   Updated: 2022/05/19 11:04:35 by lebourre         ###   ########.fr       */
+/*   Updated: 2022/05/30 13:24:08 by lebourre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,65 +24,62 @@
 
 namespace ft {
 	template<class T>
-		class node {
+		class Node {
 			public:
 			typedef T	value_type;
 
 			value_type	val;
-			unsigned char	color;
-			node<T>		*left;
-			node<T>		*right;
-			node<T>		*parent;
-
-
-			bool		isLeftChild;
-			bool		black;
-			bool		isDoubleBlack;
+			value_type	data;
+			unsigned char	c_color;
+			Node<T>		*left;
+			Node<T>		*right;
+			Node<T>		*parent;
+			int			color;
 /* ************************************************************************** */
 /*                           NODE FUNCTIONS                                   */
 /* ************************************************************************** */
 
 		public:
-			node(value_type const &v = value_type()) : val(v), color(BLACK), left(NULL), right(NULL), parent(NULL), isLeftChild(false), black(false), isDoubleBlack(false) {}
+			Node(value_type const &v = value_type()) : val(v), data(v), c_color(BLACK), left(NULL), right(NULL), parent(NULL),  color(0){}
 
-			operator	node<const value_type>() const {
-				return node<const value_type >(val);
+			operator	Node<const value_type>() const {
+				return Node<const value_type >(val);
 			}
-				node	&operator=(node const &rhs) {
+				Node	&operator=(Node const &rhs) {
 					parent = rhs.parent;
 					left = rhs.left;
 					right = rhs.right;
 					return *this;
 				}
 
-			bool operator==(const node &rhs) const { return val == rhs.val; }
-			bool operator!=(const node &rhs) const { return val != rhs.val; }
+			bool operator==(const Node &rhs) const { return val == rhs.val; }
+			bool operator!=(const Node &rhs) const { return val != rhs.val; }
 			bool operator==(const value_type &rhs) const { return val == rhs; }
 			bool operator!=(const value_type &rhs) const { return val != rhs; }
 
-			static bool is_left_child(node *node) {
-				return (!is_null_node(node->parent) && node->parent->left == node);
+			static bool is_left_child(Node *Node) {
+				return (!is_null_Node(Node->parent) && Node->parent->left == Node);
 			}
-			static bool is_right_child(node *node) {
-				return (!is_null_node(node->parent) && node->parent->right == node);
+			static bool is_right_child(Node *Node) {
+				return (!is_null_Node(Node->parent) && Node->parent->right == Node);
 			}
-			static node *sibling(node* x) {
+			static Node *sibling(Node* x) {
 				if (is_left_child(x))
 					return x->parent->right;
 				return x->parent->left;
 			}
-			static bool getColor(node *x) {
-				if (is_null_node(x))
+			static bool getColor(Node *x) {
+				if (is_null_Node(x))
 					return BLACK;
-				return x->color;
+				return x->c_color;
 			}
-			static bool is_null_node(node *x) {
-//				std::cout << "x is " << x << " | color is " << (x != NULL ? x->color : -1) << std::endl;
-				return x == NULL || x->color == SENTINEL;
+			static bool is_null_Node(Node *x) {
+//				std::cout << "x is " << x << " | c_color is " << (x != NULL ? x->c_color : -1) << std::endl;
+				return x == NULL || x->c_color == SENTINEL;
 			}
 #ifdef FT_DEBUG_TREE
 
-				static void DG_tree(node *root) {
+				static void DG_tree(Node *root) {
 					_print_tree(root, 1, 2);
 				}
 
@@ -244,22 +241,22 @@ namespace ft {
 				int		ret;
 				int		tmp;
 
-				if (is_null_node(left))
+				if (is_null_Node(left))
 					print = tree_dsp.pos - 1;
 				else
 					print = left->tree_dsp.pos + left->tree_dsp.block_delta - 1;
 				ret = buffer_append_mul(b, E_PAD, print);
-				if (ret || is_null_node(left))
+				if (ret || is_null_Node(left))
 					tmp = tree_dsp.lwidth;
 				else
 				{
 					ret = buffer_connect_leaf(b, 1, tree_dsp.pos - print, &print);
 					tmp = left->tree_dsp.block_width + left->tree_dsp.block_delta;
 				}
-				if (!ret && !is_null_node(right))
+				if (!ret && !is_null_Node(right))
 				{
 					tmp = right->tree_dsp.pos + right->tree_dsp.block_delta + tmp
-						- tree_dsp.pos + is_null_node(left);
+						- tree_dsp.pos + is_null_Node(left);
 					ret = buffer_connect_leaf(b, 0, tmp, &print);
 				}
 				*printed += print;
@@ -272,7 +269,7 @@ namespace ft {
 
 				ret = buffer_append_mul(b, E_PAD, tree_dsp.label_delta)
 					|| buffer_append(b, E_PREFIX)
-					|| buffer_append_raw(b, color == 1 ? "\033[31m" : "\033[34m", sizeof("\033[31m") - 1)
+					|| buffer_append_raw(b, c_color == 1 ? "\033[31m" : "\033[34m", sizeof("\033[31m") - 1)
 					|| buffer_append_raw(b, val.to_string().c_str(), tree_dsp.label_width - WORD_ADDED_WIDTH - tree_dsp.trunc)
 					;
 				if (!ret && tree_dsp.trunc)
@@ -283,7 +280,7 @@ namespace ft {
 				tree_dsp.depth = 2;
 				return (ret);
 			}
-			int	layer_print_specific(t_buf *b, int (node::*layer_fn)(t_buf *b, int *printed), int *ret)
+			int	layer_print_specific(t_buf *b, int (Node::*layer_fn)(t_buf *b, int *printed), int *ret)
 			{
 				int		print;
 
@@ -293,14 +290,14 @@ namespace ft {
 				*ret = buffer_append_mul(b, E_PAD, tree_dsp.block_delta);
 				if (!*ret && tree_dsp.depth == 0)
 				{
-					if (!is_null_node(left))
+					if (!is_null_Node(left))
 						print += left->layer_print_specific(b, layer_fn, ret);
 					else
 					{
 						print += tree_dsp.lwidth;
 						*ret = buffer_append_mul(b, E_PAD, tree_dsp.lwidth);
 					}
-					if (!*ret && !is_null_node(right))
+					if (!*ret && !is_null_Node(right))
 						print += right->layer_print_specific(b, layer_fn, ret);
 				}
 				else if (!*ret)
@@ -320,13 +317,13 @@ namespace ft {
 				b.pretty = pretty;
 				while (!ret && max_depth >= 0)
 				{
-					layer_print_specific(&b, &node::print_label, &ret);
+					layer_print_specific(&b, &Node::print_label, &ret);
 					if (!ret)
 						ret = buffer_trim_to_newline(&b);
 					if (max_depth--)
 					{
 						if (!ret)
-							layer_print_specific(&b, &node::print_connect, &ret);
+							layer_print_specific(&b, &Node::print_connect, &ret);
 						if (!ret)
 							ret = buffer_trim_to_newline(&b);
 					}
@@ -402,12 +399,12 @@ namespace ft {
 					tree_dsp.trunc = 1;
 				tree_dsp.label_width = std::min(tree_dsp.label_width, MAX_WORD_WIDTH) + WORD_ADDED_WIDTH;
 			}
-			static int	_calc_depth(node *tree, int depth)
+			static int	_calc_depth(Node *tree, int depth)
 			{
 				int				depth_left;
 				int				depth_right;
 
-				if (!tree || tree->color == SENTINEL)
+				if (!tree || tree->c_color == SENTINEL)
 					return (0);
 				tree->init_calc();
 				depth_left = _calc_depth(tree->left, depth + 1);
@@ -420,7 +417,7 @@ namespace ft {
 				return (std::max(depth, std::max(depth_left, depth_right)));
 			}
 
-			static int	_print_tree(node *root, int pretty, int fd)
+			static int	_print_tree(Node *root, int pretty, int fd)
 			{
 				int				ret;
 

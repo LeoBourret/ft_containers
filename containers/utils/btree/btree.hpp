@@ -5,41 +5,43 @@
 #include <iostream>
 //#include "binary_tree_node1.hh"
 #include "pair.hpp"
+#include "../utils.hpp"
 
 #define RED 0
 #define BLACK 1
 
 namespace ft
 {
-	template <class Key, class T>
+	template <class T>
 		class Node
 		{
 			public:
-				ft::pair<Key, T>	val;
+				T					val;
 				Node				*left;
 				Node				*right;
 				Node				*parent;
 				bool				black;
 				bool				color;
 				bool				isLeftChild;
-				bool					isDoubleBlack;
+				bool				isDoubleBlack;
 
-				Node(ft::pair<const Key, T> val)
-					: val(val), left(NULL), right(NULL), parent(NULL), black(false), isLeftChild(false), isDoubleBlack(false)
+				Node(T value)
+					: val(value), left(NULL), right(NULL), parent(NULL), black(false), isLeftChild(false), isDoubleBlack(false)
 				{}
 		};
 
-	template <typename Pair, class Key, class T, class Compare = std::less<Pair>,
-			 class Node_Alloc = std::allocator<Node<Key, T> >,class Pair_Alloc = std::allocator<Pair> >
+	template <class Key, class Mapped_type, class Pair = ft::pair<Key, Mapped_type>, class Compare = std::less<Key>,
+			 class Node_Alloc = std::allocator<Node<Pair> >,class Pair_Alloc = std::allocator<Pair>, class Management_Alloc = std::allocator<ft::Node<ft::pair<int,int> > > >
 				 class Rb_tree
 				 {
 					 public:
-						 typedef	Pair_Alloc						allocator_type;
-						 typedef typename ft::Node<Key, T>		Node;
-						 typedef Pair							value_type;
-						 typedef	Key								key_type;
-						 typedef Node_Alloc						node_alloc;
-						 typedef	size_t							size_type;
+						 typedef	Pair_Alloc				allocator_type;
+						 typedef typename ft::Node<Pair>	Node;
+						 typedef Pair						value_type;
+						 typedef Key						key_type;
+						 typedef Node_Alloc					node_alloc;
+						 typedef	size_t					size_type;
+						 typedef Management_Alloc			management_alloc;
 
 
 					 private:
@@ -48,19 +50,21 @@ namespace ft
 						  * _management_node will be used to manage end() begin()
 						  *	it will store the first node at his left pointer, last
 						  *	node at his right pointer, and _root as his parent. It will also contain the size
-						  *	of the three at his key value.
+						  *	of the three at his pair.second value.
 						  */
-						 Node		*_management_node;
+						 ft::Node<ft::pair<int,int> >		*_management_node;
 						 size_type	_size;
 						 node_alloc	_node_alloc;
+						 management_alloc	_management_alloc;
 						 Pair		_pair;
 
 					 public:
 						 Rb_tree(const node_alloc& node_alloc_init = node_alloc())
 							 :	_root(NULL), _node_alloc(node_alloc_init)
 						 {
-							 _management_node = _node_alloc.allocate(1);
-							 _node_alloc.construct(_management_node, Node(ft::make_pair<int, int>(0, 0)));
+							 _management_node = _management_alloc.allocate(1);
+							 _management_alloc.construct(_management_node, Node(ft::make_pair<int, int>(0, 0)));
+							 _management_node->val.first++;
 						 }
 						 ~Rb_tree()
 						 {
@@ -77,7 +81,7 @@ namespace ft
 								 _root = node;
 								 _root->black = true;
 								 _size++;
-								 _management_node->val.first += 1;
+								 _management_node->val.second += 1;
 								 _root->right = _management_node;
 								 _root->left = _management_node;
 								 _management_node->parent = _root;
@@ -93,7 +97,7 @@ namespace ft
 								 updateMinimum(node);
 							 else if (isMaximum(node))
 								 updateMaximum(node);
-							 _management_node->val.first += 1;
+							 _management_node->val.second++;
 							 return node;
 						 }
 
@@ -142,7 +146,7 @@ namespace ft
 								 if (movedUpNode->isDoubleBlack == true)
 									 replaceParentsChild(movedUpNode->parent, movedUpNode, NULL);
 							 }
-							 _management_node->val.first -= 1;
+							 _management_node->val.second -= 1;
 							 return (1);
 						 }
 
@@ -158,17 +162,17 @@ namespace ft
 							 node = _root;
 							 while (node != NULL && node != _management_node && node->val.first != key)
 							 {
-								 if (Compare(key, node->val.first))
+								 if (Compare()(key, node->val.first))
 									 node = node->left;
 								 else
 									 node = node->right;
 							 }
 							 if (node == NULL || node == _management_node)
-								 return NULL;
+								 return _management_node;
 							 return node;
 						 }
 
-						 Node	*getManagementNode()
+						 Node	*getManagementNode() const
 						 {
 							 return (_management_node);
 						 }
@@ -514,13 +518,14 @@ namespace ft
 							 }
 
 							 /**
-							  * Node has no children -->
-							  * node is red --> just remove it
-							  * node is black --> replace it by a temporary NIL node (needed to fix the R-B rules)
+							  * Node has no children:
+							  *							node is red --> just remove it
+							  *							node is black --> replace it by a temporary NIL node (needed to fix the R-B rules)
 							  */
 							 else
 							 {
-								 Node *newChild = new Node();
+								 Node *newChild = _node_alloc.allocate(1);
+								 _node_alloc.construct(newChild, Node(
 								 if (node->black == true)
 									 newChild->isDoubleBlack = true;
 								 else
