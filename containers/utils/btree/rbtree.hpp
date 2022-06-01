@@ -52,6 +52,8 @@ namespace ft
 					if (*this == rhs)
 						return (*this);
 					_ptr = rhs._ptr;
+					_management_node = rhs._management_node;
+					_leaf = rhs._leaf;
 					return (*this);
 				};
 				virtual ~bidirectional_iterator() {};
@@ -79,7 +81,7 @@ namespace ft
 					}
 					else
 					{
-						while (_ptr == _ptr->parent->right && _ptr != _ptr->parent)
+						while (_ptr == _ptr->parent->right && _ptr != _ptr->parent->parent)
 							_ptr = _ptr->parent;
 						_ptr = _ptr->parent;
 					}
@@ -101,7 +103,7 @@ namespace ft
 						return (*this);
 					}
 
-					if (_ptr->left != _leaf)
+					if (_ptr->left && _ptr->left!= _leaf)
 					{
 						_ptr = _ptr->left;
 						while (_ptr->right != _leaf)
@@ -109,11 +111,18 @@ namespace ft
 					}
 					else
 					{
-						while (_ptr == _ptr->parent->left && _ptr != _ptr->parent)
+						while (_ptr == _ptr->parent->left && _ptr != _ptr->parent->parent)
 							_ptr = _ptr->parent;
 						_ptr = _ptr->parent;
 					}
 					return (*this);
+				}
+
+				bidirectional_iterator operator--(int)
+				{
+					bidirectional_iterator tmp = *this;
+					operator--();
+					return (tmp);
 				}
 
 				Node	*getNode() const
@@ -160,6 +169,17 @@ namespace ft
 					if (*this == rhs)
 						return (*this);
 					_ptr = rhs._ptr;
+					_management_node = rhs._management_node;
+					_leaf = rhs._leaf;
+					return (*this);
+				};
+				const_bidirectional_iterator&	operator=(const bidirectional_iterator<T> &rhs)
+				{
+					if (*this == rhs)
+						return (*this);
+					_ptr = rhs.getNode();
+					_management_node = rhs.getManagement();
+					_leaf = rhs.getLeaf();
 					return (*this);
 				};
 
@@ -189,7 +209,7 @@ namespace ft
 					}
 					else
 					{
-						while (_ptr == _ptr->parent->right && _ptr != _ptr->parent)
+						while (_ptr == _ptr->parent->right && _ptr != _ptr->parent->parent)
 							_ptr = _ptr->parent;
 						_ptr = _ptr->parent;
 					}
@@ -219,13 +239,19 @@ namespace ft
 					}
 					else
 					{
-						while (_ptr == _ptr->parent->left && _ptr != _ptr->parent)
+						while (_ptr == _ptr->parent->left && _ptr != _ptr->parent->parent)
 							_ptr = _ptr->parent;
 						_ptr = _ptr->parent;
 					}
 					return (*this);
 				}
 
+				const_bidirectional_iterator operator--(int)
+				{
+					const_bidirectional_iterator tmp = *this;
+					operator--();
+					return (tmp);
+				}
 				Node*	getNode() const
 				{
 					return (_ptr);
@@ -315,21 +341,29 @@ namespace ft
 			void deleteFix(NodePtr x)
 			{
 				NodePtr s;
-				while (x != management_node->parent && x->color == 0) {
-					if (x == x->parent->left) {
+
+				while (x != management_node->parent && x->color == 0)
+				{
+					if (x == x->parent->left)
+					{
 						s = x->parent->right;
-						if (s->color == 1) {
+						if (s->color == 1)
+						{
 							s->color = 0;
 							x->parent->color = 1;
 							leftRotate(x->parent);
 							s = x->parent->right;
 						}
 
-						if (s->left->color == 0 && s->right->color == 0) {
+						if (s->left->color == 0 && s->right->color == 0)
+						{
 							s->color = 1;
 							x = x->parent;
-						} else {
-							if (s->right->color == 0) {
+						}
+						else
+						{
+							if (s->right->color == 0)
+							{
 								s->left->color = 0;
 								s->color = 1;
 								rightRotate(s);
@@ -342,26 +376,31 @@ namespace ft
 							leftRotate(x->parent);
 							x = management_node->parent;
 						}
-					} else {
+					}
+					else
+					{
 						s = x->parent->left;
-						if (s->color == 1) {
+						if (s->color == 1)
+						{
 							s->color = 0;
 							x->parent->color = 1;
 							rightRotate(x->parent);
 							s = x->parent->left;
 						}
-
-						if (s->right->color == 0 && s->right->color == 0) {
+						if (s->right->color == 0 && s->right->color == 0)
+						{
 							s->color = 1;
 							x = x->parent;
-						} else {
-							if (s->left->color == 0) {
+						}
+						else
+						{
+							if (s->left->color == 0)
+							{
 								s->right->color = 0;
 								s->color = 1;
 								leftRotate(s);
 								s = x->parent->left;
 							}
-
 							s->color = x->parent->color;
 							x->parent->color = 0;
 							s->left->color = 0;
@@ -374,7 +413,7 @@ namespace ft
 			}
 
 			void rbTransplant(NodePtr u, NodePtr v) {
-				if (u->parent == NULL) {
+				if (u->parent == management_node) {
 					management_node->parent = v;
 				} else if (u == u->parent->left) {
 					u->parent->left = v;
@@ -388,38 +427,38 @@ namespace ft
 			{
 				NodePtr z = TNULL;
 				NodePtr x, y;
-				while (node != TNULL) {
-					if (node->data == val) {
+				while (node != TNULL)
+				{
+					if (node->data == val)
 						z = node;
-					}
-
-					if (node->data <= val) {
+					if (node->data <= val)
 						node = node->right;
-					} else {
+					else
 						node = node->left;
-					}
 				}
-
-				if (z == TNULL) {
-					std::cout << "Key not found in the tree" << std::endl;
+				if (z == TNULL)
 					return;
-				}
-
 				y = z;
 				int y_original_color = y->color;
-				if (z->left == TNULL) {
+				if (z->left == TNULL)
+				{
 					x = z->right;
 					rbTransplant(z, z->right);
-				} else if (z->right == TNULL) {
+				}
+				else if (z->right == TNULL)
+				{
 					x = z->left;
 					rbTransplant(z, z->left);
-				} else {
+				}
+				else
+				{
 					y = minimum(z->right);
 					y_original_color = y->color;
 					x = y->right;
-					if (y->parent == z) {
+					if (y->parent == z)
 						x->parent = y;
-					} else {
+					else
+					{
 						rbTransplant(y, y->right);
 						y->right = z->right;
 						y->right->parent = y;
@@ -430,11 +469,14 @@ namespace ft
 					y->left->parent = y;
 					y->color = z->color;
 				}
+//				ft::Node<T>::DG_tree(management_node->parent);
 				delete z;
-				if (y_original_color == 0) {
+				if (y_original_color == 0)
 					deleteFix(x);
-				}
 				_size--;
+				management_node->right = findMax();
+				management_node->left = findMin();
+				//ft::Node<T>::DG_tree(management_node->parent);
 			}
 
 			// For balancing the tree after insertion
@@ -493,28 +535,11 @@ namespace ft
 				management_node->parent->color = 0;
 			}
 
-			void printHelper(NodePtr root, std::string indent, bool last)
-			{
-				if (root != TNULL) {
-					std::cout << indent;
-					if (last) {
-						std::cout << "R----";
-						indent += "   ";
-					} else {
-						std::cout << "L----";
-						indent += "|  ";
-					}
-
-					std::string sColor = root->color ? "RED" : "BLACK";
-					std::cout << root->data.second << "(" << sColor << ")" << std::endl;
-					printHelper(root->left, indent, false);
-					printHelper(root->right, indent, true);
-				}
-			}
 
 
 		public:
-			RedBlackTree() {
+			RedBlackTree()
+			{
 				TNULL = new Node<pair_type>();
 				TNULL->color = 0;
 				TNULL->left = NULL;
@@ -523,7 +548,6 @@ namespace ft
 				management_node->parent = TNULL;
 				management_node->right = TNULL;
 				management_node->left = TNULL;
-
 				_size = 0;
 			}
 
@@ -613,7 +637,6 @@ namespace ft
 				return node;
 			}
 
-
 			NodePtr	findMax() const
 			{
 				NodePtr node = management_node->parent;
@@ -690,14 +713,22 @@ namespace ft
 
 				x->left = y->right;
 				if (y->right != TNULL)
+				{
 					y->right->parent = x;
+				}
 				y->parent = x->parent;
 				if (x->parent == management_node)
+				{
 					management_node->parent = y;
-				else if (x == x->parent->right)
+				}
+				else if (x->parent && x == x->parent->right)
+				{
 					x->parent->right = y;
+				}
 				else
+				{
 					x->parent->left = y;
+				}
 				y->right = x;
 				x->parent = y;
 			}
@@ -799,14 +830,9 @@ namespace ft
 				return this->_size;
 			}
 
-			void deleteNode(pair_type data)
+			void deleteNode(key_type data)
 			{
 				deleteNodeHelper(this->management_node->parent, data);
-			}
-
-			void printTree() {
-				if (management_node->parent != TNULL)
-					printHelper(this->management_node->parent, "", true);
 			}
 	};
 }

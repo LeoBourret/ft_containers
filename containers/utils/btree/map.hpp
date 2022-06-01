@@ -193,13 +193,24 @@ namespace ft
 
 		size_type erase (const key_type& k)
 		{
-			return (_rbt.deleteNode(k));
+			iterator it = find(k);
+
+			if (it == end())
+				return (0);
+			_rbt.deleteNode(k);
+			return (1);
 		};
 
 		void erase (iterator first, iterator last)
 		{
-			for (iterator it = ++first; it != last; it++)
-				this->erase(it);
+			iterator tmp;
+
+			while (first != last)
+			{
+				tmp = first;
+				first++;
+				erase(tmp);
+			}
 		};
 
 		void	swap(map &x)

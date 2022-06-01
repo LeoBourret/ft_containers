@@ -8,7 +8,7 @@
 # include <typeinfo>
 # include <iostream>
 
-static class nullptr_t
+static class u_nullptr_t
 {
     public:
                template<class T>
