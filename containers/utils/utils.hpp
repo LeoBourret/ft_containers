@@ -110,7 +110,7 @@ namespace ft
 			typedef	typename	ft::iterator_traits<Iterator>::pointer				pointer;
 			typedef	typename	ft::iterator_traits<Iterator>::reference			reference;
 
-			reverse_iterator(void) : _ptr(NULL)							{};
+			reverse_iterator(void) : _ptr()							{};
 			explicit reverse_iterator(iterator_type it) : _ptr(it)				{};
 			template <class It>
                 reverse_iterator (const reverse_iterator<It>& rev_it)
@@ -120,16 +120,16 @@ namespace ft
 			virtual ~reverse_iterator()											{};
 
 			iterator_type base() const									{return (_ptr);};
-			reverse_iterator& operator++()								{_ptr = _ptr - 1; return *this;};
-			reverse_iterator operator++(int)							{reverse_iterator tmp(*this); _ptr = _ptr - 1; return tmp;};
-			reverse_iterator& operator--()								{_ptr = _ptr + 1; return *this;};
-			reverse_iterator operator--(int)							{reverse_iterator tmp(*this); _ptr = _ptr + 1; return tmp;};
+			reverse_iterator& operator++()								{_ptr--; return *this;};
+			reverse_iterator operator++(int)							{reverse_iterator tmp(*this); _ptr--; return tmp;};
+			reverse_iterator& operator--()								{_ptr++; return *this;};
+			reverse_iterator operator--(int)							{reverse_iterator tmp(*this); _ptr++; return tmp;};
 			reverse_iterator& operator+=(difference_type n)				{_ptr = _ptr - n; return *this;};
 			reverse_iterator operator+(difference_type n) const			{return (reverse_iterator(_ptr - n));};
 			reverse_iterator& operator-=(difference_type n)				{_ptr = _ptr + n; return *this;};
 			reverse_iterator operator-(difference_type n) const			{return (reverse_iterator(_ptr + n));};
 
-			reference operator*() const									{return *(_ptr - 1);};
+			reference operator*() const									{iterator_type tmp = _ptr; return *(--tmp);};
 			pointer operator->() const									{return &(operator*());};
 			reference operator[] (difference_type n) const				{return (this->base()[-n - 1]);}
 
@@ -199,15 +199,14 @@ namespace ft
 		typename reverse_iterator<Iterator_L>::difference_type operator- (const reverse_iterator<Iterator_L>& lhs,
 				const reverse_iterator<Iterator_R>& rhs) { return (rhs.base() - lhs.base()); }
 
-	/* SWAP */
-	template <class T>
+/*	template <class T>
 	void	swap(T &a, T &b)
 	{
 		T tmp(a);
 
 		a = b;
 		b = tmp;
-	}
+	}*/
 }
 
 
