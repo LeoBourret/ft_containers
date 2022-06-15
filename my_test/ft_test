@@ -1,0 +1,186 @@
+
+CONSTRUCTOR TEST
+The contents of fifth are: 16 2 77 29
+
+CONSTRUCTOR TEST
+Size of foo: 0
+Size of bar: 3
+
+BEGIN_TEST
+myvector contains: 1 2 3 4 5
+
+END_TEST
+myvector contains: 1 2 3 4 5
+
+RBEGIN_TEST
+myvector contains: 5 4 3 2 1
+
+REND_TEST
+myvector contains: 5 4 3 2 1
+
+SIZE_TEST
+0. size: 0
+1. size: 10
+2. size: 20
+3. size: 19
+
+REND_TEST
+size: 100
+capacity: 128
+max_size: 2305843009213693951
+
+RESIZE TEST
+myvector contains: 1 2 3 4 5 100 100 100 0 0 0 0
+
+CAPACITY TESTS
+size: 100
+capacity: 128
+max_size: -1
+
+EMPTY TEST
+total: 55
+
+RESERVE TEST
+making foo grow:
+capacity changed: 1
+capacity changed: 2
+capacity changed: 4
+capacity changed: 8
+capacity changed: 16
+capacity changed: 32
+capacity changed: 64
+capacity changed: 128
+making bar grow:
+capacity changed: 100
+
+OPERATOR_BRACKET TESTS
+myvector contains: 9 8 7 6 5 4 3 2 1 0
+
+AT TESTS
+myvector contains: 0 1 2 3 4 5 6 7 8 9
+
+FRONT TESTS
+myvector.front() is now 62
+
+BACK TESTS
+myvector contains: 10 9 8 7 6 5 4 3 2 1 0
+
+ASSIGN TEST
+42 42 42 42 42 42 42 42 42 42 42 42 
+42 42 42 42 42 42 42 42 42 42 
+1313 14 92 
+
+PUSH_BACK TEST
+9383 10886 12777 36915 27793 38335 5386 492 36649 1421 2362 10027 8690 59 17763 33926 20540 23426 9172 15736 5211 35368 22567 36429 25782 21530 2862 25123 14067 23135 33929 19802 34022 3058 13069 18167 1393 18456 15011 38042 
+POP_BACK TEST
+The elements of myvector add up to 600
+
+INSERT TEST
+myvector contains: 501 502 503 300 300 400 400 200 100 100 100
+
+ERASE TEST
+myvector contains: 4 5 7 8 9 10
+
+SWAP TEST
+foo contains: 200 200 200 200 200
+bar contains: 100 100 100
+
+CLEAR TEST
+foo contains: 200 200 200 200 200
+bar contains: 100 100 100
+
+CLEAR TEST
+The allocated array contains: 0 1 2 3 4
+
+CONSTRUCTOR TEST
+The contents of fifth are: 16 2 77 29
+
+CONSTRUCTOR TEST
+Size of foo: 0
+Size of bar: 3
+
+BEGIN_TEST
+myvector contains: 1 2 3 4 5
+
+END_TEST
+myvector contains: 1 2 3 4 5
+
+RBEGIN_TEST
+myvector contains: 5 4 3 2 1
+
+REND_TEST
+myvector contains: 5 4 3 2 1
+
+SIZE_TEST
+0. size: 0
+1. size: 10
+2. size: 20
+3. size: 19
+
+REND_TEST
+size: 100
+capacity: 128
+max_size: 2305843009213693951
+
+RESIZE TEST
+myvector contains: 1 2 3 4 5 100 100 100 0 0 0 0
+
+CAPACITY TESTS
+size: 100
+capacity: 128
+max_size: -1
+
+EMPTY TEST
+total: 55
+
+RESERVE TEST
+making foo grow:
+capacity changed: 1
+capacity changed: 2
+capacity changed: 4
+capacity changed: 8
+capacity changed: 16
+capacity changed: 32
+capacity changed: 64
+capacity changed: 128
+making bar grow:
+capacity changed: 100
+
+OPERATOR_BRACKET TESTS
+myvector contains: 9 8 7 6 5 4 3 2 1 0
+
+AT TESTS
+myvector contains: 0 1 2 3 4 5 6 7 8 9
+
+FRONT TESTS
+myvector.front() is now 62
+
+BACK TESTS
+myvector contains: 10 9 8 7 6 5 4 3 2 1 0
+
+ASSIGN TEST
+42 42 42 42 42 42 42 42 42 42 42 42 
+42 42 42 42 42 42 42 42 42 42 
+1313 14 92 
+
+PUSH_BACK TEST
+9383 10886 12777 36915 27793 38335 5386 492 36649 1421 2362 10027 8690 59 17763 33926 20540 23426 9172 15736 5211 35368 22567 36429 25782 21530 2862 25123 14067 23135 33929 19802 34022 3058 13069 18167 1393 18456 15011 38042 
+POP_BACK TEST
+The elements of myvector add up to 600
+
+INSERT TEST
+myvector contains: 501 502 503 300 300 400 400 200 100 100 100
+
+ERASE TEST
+myvector contains: 4 5 7 8 9 10
+
+SWAP TEST
+foo contains: 200 200 200 200 200
+bar contains: 100 100 100
+
+CLEAR TEST
+foo contains: 200 200 200 200 200
+bar contains: 100 100 100
+
+CLEAR TEST
+The allocated array contains: 0 1 2 3 4

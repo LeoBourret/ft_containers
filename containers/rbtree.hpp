@@ -2,7 +2,7 @@
 # define RBTREE_HPP
 
 #include <iostream>
-#include "../utils.hpp"
+#include "utils.hpp"
 #include "pair.hpp"
 //#include "bidirectional_iterator.hpp"
 //#include "binary_tree_node1.hh"
@@ -31,20 +31,21 @@ namespace ft
 		{
 			public:
 				typedef	T																						value_type;
-				typedef Node<T>																					Node;
+				typedef Node<T>																					node;
 				typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::difference_type		difference_type;
-				typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
+				typedef std::bidirectional_iterator_tag															iterator_category;
+				//typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
 				typedef value_type*																				pointer;
 				typedef value_type&																				reference;
 
 			private:
-				Node*	_ptr;
-				Node*	_management_node;
-				Node*	_leaf;
+				node*	_ptr;
+				node*	_management_node;
+				node*	_leaf;
 
 			public:
 				bidirectional_iterator()									: _ptr(u_nullptr), _management_node(u_nullptr), _leaf(u_nullptr)				{};
-				bidirectional_iterator(Node* ptr, Node* mn, Node* leaf)		: _ptr(ptr), _management_node(mn), _leaf(leaf)									{};
+				bidirectional_iterator(node* ptr, node* mn, node* leaf)		: _ptr(ptr), _management_node(mn), _leaf(leaf)									{};
 				bidirectional_iterator(const bidirectional_iterator &src)	: _ptr(src._ptr), _management_node(src._management_node), _leaf(src._leaf)		{};
 
 				bidirectional_iterator&	operator=(const bidirectional_iterator &rhs)
@@ -60,7 +61,7 @@ namespace ft
 
 
 				bool		operator==(const bidirectional_iterator &it) const	{return (this->_ptr == it._ptr);};
-				bool		operator==(Node *ptr) const							{return (this->_ptr == ptr);};
+				bool		operator==(node *ptr) const							{return (this->_ptr == ptr);};
 				bool		operator!=(const bidirectional_iterator &it) const	{return (this->_ptr != it._ptr);};
 
 				reference	operator*() const									{return (this->_ptr->data);};
@@ -125,17 +126,17 @@ namespace ft
 					return (tmp);
 				}
 
-				Node	*getNode() const
+				node	*getNode() const
 				{
 					return (_ptr);
 				}
 
-				Node	*getLeaf() const
+				node	*getLeaf() const
 				{
 					return (_leaf);
 				}
 
-				Node	*getManagement() const
+				node	*getManagement() const
 				{
 					return (_management_node);
 				}
@@ -147,20 +148,20 @@ namespace ft
 		{
 			public:
 				typedef	T const																					value_type;
-				typedef Node<T>																					Node;
+				typedef Node<T>																					node;
 				typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::difference_type		difference_type;
 				typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
 				typedef value_type const*																		pointer;
 				typedef value_type	const&																		reference;
 
 			private:
-				Node*	_ptr;
-				Node*	_management_node;
-				Node*	_leaf;
+				node*	_ptr;
+				node*	_management_node;
+				node*	_leaf;
 
 			public:
 				const_bidirectional_iterator()											: _ptr(u_nullptr), _management_node(u_nullptr), _leaf(u_nullptr)				{};
-				const_bidirectional_iterator(Node* ptr, Node* mn, Node* leaf)			: _ptr(ptr), _management_node(mn), _leaf(leaf)									{};
+				const_bidirectional_iterator(node* ptr, node* mn, node* leaf)			: _ptr(ptr), _management_node(mn), _leaf(leaf)									{};
 				const_bidirectional_iterator(const const_bidirectional_iterator &src)	: _ptr(src._ptr), _management_node(src._management_node), _leaf(src._leaf)		{};
 				const_bidirectional_iterator(const bidirectional_iterator<T> &src)		: _ptr(src.getNode()), _management_node(src.getManagement()), _leaf(src.getLeaf())	{};
 
@@ -187,7 +188,7 @@ namespace ft
 
 
 				bool		operator==(const const_bidirectional_iterator &it) const	{return (this->_ptr == it._ptr);};
-				bool		operator==(Node *ptr) const									{return (this->_ptr == ptr);};
+				bool		operator==(node *ptr) const									{return (this->_ptr == ptr);};
 				bool		operator==(const bidirectional_iterator<T> &it) const		{return (this->_ptr == it.getNode());};
 				bool		operator!=(const const_bidirectional_iterator &it) const	{return (this->_ptr != it._ptr);};
 
@@ -252,7 +253,7 @@ namespace ft
 					operator--();
 					return (tmp);
 				}
-				Node*	getNode() const
+				node*	getNode() const
 				{
 					return (_ptr);
 				}
@@ -274,18 +275,18 @@ namespace ft
 
 		private:
 			NodePtr		management_node;
-			NodePtr		TNULL;
+			NodePtr		_leaf;
 			size_type	_size;
 			key_compare	_cmp;
 
 
 			void	clear(NodePtr node)
 			{
-				if (node->left && node->left != TNULL)
+				if (node->left && node->left != _leaf)
 					clear(node->left);
-				if (node->right && node->right != TNULL)
+				if (node->right && node->right != _leaf)
 					clear(node->right);
-				if (node != management_node && node != TNULL)
+				if (node != management_node && node != _leaf)
 					delete node;
 			}
 
@@ -301,7 +302,7 @@ namespace ft
 			// Preorder
 			void preOrderHelper(NodePtr node)
 			{
-				if (node != TNULL)
+				if (node != _leaf)
 				{
 					std::cout << node->data << " ";
 					preOrderHelper(node->left);
@@ -311,7 +312,7 @@ namespace ft
 
 			// Inorder
 			void inOrderHelper(NodePtr node) {
-				if (node != TNULL) {
+				if (node != _leaf) {
 					inOrderHelper(node->left);
 					std::cout << node->data << " ";
 					inOrderHelper(node->right);
@@ -320,7 +321,7 @@ namespace ft
 
 			// Post order
 			void postOrderHelper(NodePtr node) {
-				if (node != TNULL) {
+				if (node != _leaf) {
 					postOrderHelper(node->left);
 					postOrderHelper(node->right);
 					std::cout << node->data << " ";
@@ -329,7 +330,7 @@ namespace ft
 
 			NodePtr searchTreeHelper(NodePtr node, key_type key) const
 			{
-				if (node == TNULL || key == node->data.first) {
+				if (node == _leaf || key == node->data.first) {
 					return node;
 				}
 
@@ -427,9 +428,9 @@ namespace ft
 
 			void deleteNodeHelper(NodePtr node, key_type val)
 			{
-				NodePtr z = TNULL;
+				NodePtr z = _leaf;
 				NodePtr x, y;
-				while (node != TNULL)
+				while (node != _leaf)
 				{
 					if (node->data.first == val)
 						z = node;
@@ -438,16 +439,16 @@ namespace ft
 					else
 						node = node->left;
 				}
-				if (z == TNULL)
+				if (z == _leaf)
 					return;
 				y = z;
 				int y_original_color = y->color;
-				if (z->left == TNULL)
+				if (z->left == _leaf)
 				{
 					x = z->right;
 					rbTransplant(z, z->right);
 				}
-				else if (z->right == TNULL)
+				else if (z->right == _leaf)
 				{
 					x = z->left;
 					rbTransplant(z, z->left);
@@ -543,28 +544,28 @@ namespace ft
 			RedBlackTree(const key_compare &comp = key_compare())
 				: _cmp(comp)
 			{
-				TNULL = new Node<pair_type>();
-				TNULL->color = 0;
-				TNULL->left = NULL;
-				TNULL->right = NULL;
+				_leaf = new Node<pair_type>();
+				_leaf->color = 0;
+				_leaf->left = NULL;
+				_leaf->right = NULL;
 				management_node = new Node<pair_type>;
-				management_node->parent = TNULL;
-				management_node->right = TNULL;
-				management_node->left = TNULL;
+				management_node->parent = _leaf;
+				management_node->right = _leaf;
+				management_node->left = _leaf;
 				_size = 0;
 			}
 
 			RedBlackTree (RedBlackTree const & src)
-				:  management_node(NULL), TNULL(NULL), _cmp(src._cmp)
+				:  management_node(NULL), _leaf(NULL), _cmp(src._cmp)
 			{
-				TNULL = new Node<pair_type>();
-				TNULL->color = 0;
-				TNULL->left = NULL;
-				TNULL->right = NULL;
+				_leaf = new Node<pair_type>();
+				_leaf->color = 0;
+				_leaf->left = NULL;
+				_leaf->right = NULL;
 				management_node = new Node<pair_type>;
-				management_node->parent = TNULL;
-				management_node->right = TNULL;
-				management_node->left = TNULL;
+				management_node->parent = _leaf;
+				management_node->right = _leaf;
+				management_node->left = _leaf;
 				_size = 0;
 				*this = src;
 			}
@@ -573,7 +574,7 @@ namespace ft
 			{
 				clear(management_node->parent);
 				delete management_node;
-				delete TNULL;
+				delete _leaf;
 			};
 
 			RedBlackTree &	operator= (RedBlackTree const & rhs)
@@ -627,14 +628,14 @@ namespace ft
 			}
 
 			NodePtr minimum(NodePtr node) {
-				while (node->left != TNULL) {
+				while (node->left != _leaf) {
 					node = node->left;
 				}
 				return node;
 			}
 
 			NodePtr maximum(NodePtr node) {
-				while (node->right != TNULL) {
+				while (node->right != _leaf) {
 					node = node->right;
 				}
 				return node;
@@ -644,9 +645,9 @@ namespace ft
 			{
 				NodePtr node = management_node->parent;
 
-				if (management_node->parent == TNULL)
+				if (management_node->parent == _leaf)
 					return management_node;
-				while (node->right != TNULL)
+				while (node->right != _leaf)
 					node = node->right;
 				return node;
 			}
@@ -655,9 +656,9 @@ namespace ft
 			{
 				NodePtr node = management_node->parent;
 
-				if (management_node->parent == TNULL)
+				if (management_node->parent == _leaf)
 					return management_node;
-				while (node->left != TNULL)
+				while (node->left != _leaf)
 					node = node->left;
 				return node;
 
@@ -665,7 +666,7 @@ namespace ft
 
 			NodePtr successor(NodePtr x)
 			{
-				if (x->right != TNULL)
+				if (x->right != _leaf)
 					return minimum(x->right);
 
 				NodePtr y = x->parent;
@@ -679,7 +680,7 @@ namespace ft
 
 			NodePtr predecessor(NodePtr x)
 			{
-				if (x->left != TNULL)
+				if (x->left != _leaf)
 					return maximum(x->left);
 
 				NodePtr y = x->parent;
@@ -697,7 +698,7 @@ namespace ft
 				NodePtr y = x->right;
 
 				x->right = y->left;
-				if (y->left != TNULL)
+				if (y->left != _leaf)
 					y->left->parent = x;
 				y->parent = x->parent;
 				if (x->parent == management_node)
@@ -715,7 +716,7 @@ namespace ft
 				NodePtr y = x->left;
 
 				x->left = y->right;
-				if (y->right != TNULL)
+				if (y->right != _leaf)
 				{
 					y->right->parent = x;
 				}
@@ -741,14 +742,14 @@ namespace ft
 			{
 				NodePtr node = new Node<pair_type>(val);
 				node->parent = NULL;
-				node->left = TNULL;
-				node->right = TNULL;
+				node->left = _leaf;
+				node->right = _leaf;
 				node->color = 1;
 
 				NodePtr y = NULL;
 				NodePtr x = this->management_node->parent;
 
-				while (x != TNULL)
+				while (x != _leaf)
 				{
 					y = x;
 					if (_cmp(node->data.first, x->data.first))
@@ -778,7 +779,7 @@ namespace ft
 					if (node == findMax())
 					{
 						management_node->right = node;
-						node->right = TNULL;
+						node->right = _leaf;
 					}
 					else if (node == findMin())
 						management_node->left = node;
@@ -801,15 +802,15 @@ namespace ft
 			{
 				clear(management_node->parent);
 				delete management_node;
-				delete TNULL;
-				TNULL = new Node<pair_type>();
-				TNULL->color = 0;
-				TNULL->left = NULL;
-				TNULL->right = NULL;
+				delete _leaf;
+				_leaf = new Node<pair_type>();
+				_leaf->color = 0;
+				_leaf->left = NULL;
+				_leaf->right = NULL;
 				management_node = new Node<pair_type>;
-				management_node->parent = TNULL;
-				management_node->right = TNULL;
-				management_node->left = TNULL;
+				management_node->parent = _leaf;
+				management_node->right = _leaf;
+				management_node->left = _leaf;
 				_size = 0;
 			}
 
@@ -825,7 +826,7 @@ namespace ft
 
 			NodePtr getLeaf() const
 			{
-				return this->TNULL;
+				return this->_leaf;
 			}
 
 			size_type	getSize() const
@@ -840,7 +841,7 @@ namespace ft
 
 			void	setLeaf(NodePtr new_leaf)
 			{
-				TNULL = new_leaf;
+				_leaf = new_leaf;
 			}
 
 			void	setSize(size_type new_size)
