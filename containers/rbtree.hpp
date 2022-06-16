@@ -34,7 +34,6 @@ namespace ft
 				typedef Node<T>																					node;
 				typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::difference_type		difference_type;
 				typedef std::bidirectional_iterator_tag															iterator_category;
-				//typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
 				typedef value_type*																				pointer;
 				typedef value_type&																				reference;
 
@@ -261,23 +260,25 @@ namespace ft
 
 
 
-		template <class T, class Key, class Val, class Compare = std::less<Key> >
+		template <class T, class Key = T, class Compare = std::less<Key>, class Alloc = std::allocator<T> >
 	class RedBlackTree
 	{
-		typedef T								pair_type;
+		typedef T								value_type;
 		typedef Key								key_type;
-		typedef Val								mapped_type;
 		typedef Compare							key_compare;
 		typedef ft::Node<T>						*NodePtr;
 		typedef bidirectional_iterator<T>		iterator;
 		typedef const_bidirectional_iterator<T>	const_iterator;
 		typedef size_t							size_type;
+		typedef Alloc							allocator_type;
+		typedef std::allocator<ft::Node<T> >	node_allocator_type;
 
 		private:
-			NodePtr		management_node;
-			NodePtr		_leaf;
-			size_type	_size;
-			key_compare	_cmp;
+			NodePtr				management_node;
+			NodePtr				_leaf;
+			size_type			_size;
+			key_compare			_cmp;
+			node_allocator_type	_node_alloc;
 
 
 			void	clear(NodePtr node)
@@ -287,7 +288,11 @@ namespace ft
 				if (node->right && node->right != _leaf)
 					clear(node->right);
 				if (node != management_node && node != _leaf)
-					delete node;
+				{
+					_node_alloc.destroy(node);
+					_node_alloc.deallocate(node, 1);
+					//delete node;
+				}
 			}
 
 			void initializeNULLNode(NodePtr node, NodePtr parent)
@@ -473,7 +478,9 @@ namespace ft
 					y->color = z->color;
 				}
 //				ft::Node<T>::DG_tree(management_node->parent);
-				delete z;
+				_node_alloc.destroy(z);
+				_node_alloc.deallocate(z, 1);
+//				delete z;
 				if (y_original_color == 0)
 					deleteFix(x);
 				_size--;
@@ -544,11 +551,15 @@ namespace ft
 			RedBlackTree(const key_compare &comp = key_compare())
 				: _cmp(comp)
 			{
-				_leaf = new Node<pair_type>();
+				_leaf = _node_alloc.allocate(1);
+				_node_alloc.construct(_leaf, value_type());
+//				_leaf = new Node<value_type>();
 				_leaf->color = 0;
 				_leaf->left = NULL;
 				_leaf->right = NULL;
-				management_node = new Node<pair_type>;
+				management_node = _node_alloc.allocate(1);
+				_node_alloc.construct(management_node, value_type());
+//				management_node = new Node<value_type>;
 				management_node->parent = _leaf;
 				management_node->right = _leaf;
 				management_node->left = _leaf;
@@ -558,11 +569,15 @@ namespace ft
 			RedBlackTree (RedBlackTree const & src)
 				:  management_node(NULL), _leaf(NULL), _cmp(src._cmp)
 			{
-				_leaf = new Node<pair_type>();
+				_leaf = _node_alloc.allocate(1);
+				_node_alloc.construct(_leaf, value_type());
+				//_leaf = new Node<value_type>();
 				_leaf->color = 0;
 				_leaf->left = NULL;
 				_leaf->right = NULL;
-				management_node = new Node<pair_type>;
+				management_node = _node_alloc.allocate(1);
+				_node_alloc.construct(management_node, value_type());
+//				management_node = new Node<value_type>;
 				management_node->parent = _leaf;
 				management_node->right = _leaf;
 				management_node->left = _leaf;
@@ -573,8 +588,12 @@ namespace ft
 			~RedBlackTree()
 			{
 				clear(management_node->parent);
-				delete management_node;
-				delete _leaf;
+				_node_alloc.destroy(management_node);
+				_node_alloc.deallocate(management_node, 1);
+				_node_alloc.destroy(_leaf);
+				_node_alloc.deallocate(_leaf, 1);
+//				delete management_node;
+//				delete _leaf;
 			};
 
 			RedBlackTree &	operator= (RedBlackTree const & rhs)
@@ -738,9 +757,11 @@ namespace ft
 			}
 
 			// Inserting a node
-			NodePtr insert(pair_type val)
+			NodePtr insert(value_type val)
 			{
-				NodePtr node = new Node<pair_type>(val);
+				NodePtr node = _node_alloc.allocate(1);
+				_node_alloc.construct(node, val);
+//				NodePtr node = new Node<value_type>(val);
 				node->parent = NULL;
 				node->left = _leaf;
 				node->right = _leaf;
@@ -801,13 +822,23 @@ namespace ft
 			void	clear()
 			{
 				clear(management_node->parent);
-				delete management_node;
-				delete _leaf;
-				_leaf = new Node<pair_type>();
+				_node_alloc.destroy(management_node);
+				_node_alloc.deallocate(management_node, 1);
+				_node_alloc.destroy(_leaf);
+				_node_alloc.deallocate(_leaf, 1);
+
+			//	delete management_node;
+			//	delete _leaf;
+				_leaf = _node_alloc.allocate(1);
+				_node_alloc.construct(_leaf, value_type());
+
+//				_leaf = new Node<value_type>();
 				_leaf->color = 0;
 				_leaf->left = NULL;
 				_leaf->right = NULL;
-				management_node = new Node<pair_type>;
+				management_node = _node_alloc.allocate(1);
+				_node_alloc.construct(management_node, value_type());
+			//	management_node = new Node<value_type>;
 				management_node->parent = _leaf;
 				management_node->right = _leaf;
 				management_node->left = _leaf;

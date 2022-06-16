@@ -66,7 +66,7 @@ namespace ft
 		private:
 			allocator_type														_alloc;
 			Compare																_comp;
-			RedBlackTree<value_type, const key_type, mapped_type, key_compare>	_rbt;
+			RedBlackTree<value_type, const key_type, key_compare>				_rbt;
 
 		public:
 
