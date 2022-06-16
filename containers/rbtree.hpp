@@ -260,11 +260,10 @@ namespace ft
 
 
 
-		template <class T, class Key, class Compare = std::less<T>, class Alloc = std::allocator<T> >
+		template <class T, class Compare = std::less<T>, class Alloc = std::allocator<T> >
 	class RedBlackTree
 	{
 		typedef T								value_type;
-		typedef Key								key_type;
 		typedef Compare							key_compare;
 		typedef ft::Node<T>						*NodePtr;
 		typedef bidirectional_iterator<T>		iterator;
@@ -333,7 +332,7 @@ namespace ft
 				}
 			}
 
-			NodePtr searchTreeHelper(NodePtr node, key_type key) const
+			NodePtr searchTreeHelper(NodePtr node, value_type key) const
 			{
 				if (node == _leaf || key == node->data)
 				{
@@ -643,7 +642,7 @@ namespace ft
 				postOrderHelper(this->management_node->parent);
 			}
 
-			NodePtr searchTree(key_type key) const
+			NodePtr searchTree(value_type key) const
 			{
 				return searchTreeHelper(this->management_node->parent, key);
 			}

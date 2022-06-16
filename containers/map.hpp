@@ -62,11 +62,12 @@ namespace ft
 		typedef typename ft::reverse_iterator<const_iterator>						const_reverse_iterator;
 		typedef typename ft::iterator_traits<iterator>::difference_type				difference_type;
 		typedef	typename Alloc::size_type											size_type;
+		typedef ft::Node<value_type>									Node;
 
 		private:
 			allocator_type														_alloc;
 			Compare																_comp;
-			RedBlackTree<value_type, const key_type, value_compare>				_rbt;
+			RedBlackTree<value_type, value_compare>				_rbt;
 
 		public:
 
@@ -150,7 +151,7 @@ namespace ft
 
 		size_type max_size() const
 		{
-			std::allocator<Node<value_type> >	tmp;
+			std::allocator<Node>	tmp;
 			return tmp.max_size();
 		};
 
@@ -169,12 +170,11 @@ namespace ft
 
 		ft::pair<iterator,bool> insert (const value_type& val)
 		{
-			if (count(val.first))
-			{
-				iterator it = find(val.first);
+			iterator it = find(val.first);
+
+			if (it != end())
 				return ft::make_pair(it, false);
-			}
-			iterator it(_rbt.insert(val), _rbt.getManagement(), _rbt.getLeaf());
+			it = iterator(_rbt.insert(val), _rbt.getManagement(), _rbt.getLeaf());
 			return (ft::make_pair(it, true));
 		};
 
@@ -221,8 +221,8 @@ namespace ft
 
 		void	swap(map &x)
 		{
-			Node<value_type> *	management_tmp = _rbt.getManagement();
-			Node<value_type> *	leaf_temp = _rbt.getLeaf();
+			Node *	management_tmp = _rbt.getManagement();
+			Node *	leaf_temp = _rbt.getLeaf();
 			size_type	size_temp = _rbt.getSize();
 
 			_rbt.setManagement(x._rbt.getManagement());
@@ -251,20 +251,36 @@ namespace ft
 
 		iterator find (const key_type& k)
 		{
-			iterator it = begin();
+			Node*	node;
 
-			while (it != end() && it->first != k)
-					it++;
-			return (it);
+			node = _rbt.getRoot();
+			while (node->data.first != k && node != _rbt.getLeaf())
+			{
+				if (_comp(node->data.first, k))
+					node = node->right;
+				else
+					node = node->left;
+			}
+			if (node == _rbt.getLeaf())
+				return (end());
+			return (iterator(node, _rbt.getManagement(), _rbt.getLeaf()));
 		};
 
 		const_iterator find (const key_type& k) const
 		{
-			const_iterator it = begin();
+			Node*	node;
 
-			while (it != end() && it->first != k)
-					it++;
-			return (it);
+			node = _rbt.getRoot();
+			while (node->data.first != k && node != _rbt.getLeaf())
+			{
+				if (_comp(node->data.first, k))
+					node = node->right;
+				else
+					node = node->left;
+			}
+			if (node == _rbt.getLeaf())
+				return (end());
+			return (const_iterator(node, _rbt.getManagement(), _rbt.getLeaf()));
 		};
 
 		size_type count(const key_type &k) const

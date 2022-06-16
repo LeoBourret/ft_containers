@@ -35,7 +35,7 @@ namespace ft
 				typedef typename Alloc::difference_type							difference_type;
 				typedef typename Alloc::size_type								size_type;
 				typedef ft::Node<value_type>									Node;
-				typedef RedBlackTree<value_type, value_type, key_compare>		tree_type;
+				typedef RedBlackTree<value_type, key_compare>		tree_type;
 
 			protected:
 				tree_type		_rbt;
