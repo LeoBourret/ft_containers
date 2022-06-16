@@ -66,7 +66,7 @@ namespace ft
 		private:
 			allocator_type														_alloc;
 			Compare																_comp;
-			RedBlackTree<value_type, const key_type, key_compare>				_rbt;
+			RedBlackTree<value_type, const key_type, value_compare>				_rbt;
 
 		public:
 
@@ -169,7 +169,6 @@ namespace ft
 
 		ft::pair<iterator,bool> insert (const value_type& val)
 		{
-
 			if (count(val.first))
 			{
 				iterator it = find(val.first);
@@ -194,7 +193,7 @@ namespace ft
 
 		void erase (iterator position)
 		{
-			_rbt.deleteNode(position->first);
+			_rbt.deleteNode(position.getNode());
 		};
 
 
@@ -204,7 +203,7 @@ namespace ft
 
 			if (it == end())
 				return (0);
-			_rbt.deleteNode(k);
+			_rbt.deleteNode(it.getNode());
 			return (1);
 		};
 
@@ -252,23 +251,25 @@ namespace ft
 
 		iterator find (const key_type& k)
 		{
-			iterator it;
+			iterator it = begin();
 
-			it = iterator(_rbt.searchTree(k), _rbt.getManagement(), _rbt.getLeaf());
-			return (it.getNode() != _rbt.getLeaf() ? it : this->end());
+			while (it != end() && it->first != k)
+					it++;
+			return (it);
 		};
 
 		const_iterator find (const key_type& k) const
 		{
-			const_iterator it(_rbt.searchTree(k), _rbt.getManagement(), _rbt.getLeaf());
-			return (it.getNode() != _rbt.getLeaf() ? it : this->end());
+			const_iterator it = begin();
+
+			while (it != end() && it->first != k)
+					it++;
+			return (it);
 		};
 
 		size_type count(const key_type &k) const
 		{
-			if (this->find(k) == this->end())
-				return (0);
-			return (1);
+			return (this->find(k) != this->end());
 		};
 
 		iterator	lower_bound (key_type const & k)

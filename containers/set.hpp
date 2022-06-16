@@ -109,6 +109,24 @@ namespace ft
 					return (const_reverse_iterator(this->begin()));
 				};
 
+				/* Capacity functions */
+				bool empty() const
+				{
+					return (!_rbt.getSize() ? true : false);
+				};
+
+				size_type size() const
+				{
+					return (_rbt.getSize());
+				};
+
+				size_type max_size() const
+				{
+					std::allocator<Node>	tmp;
+					return tmp.max_size();
+				};
+
+
 				/* Modifiers function */
 
 				ft::pair<iterator,bool> insert (const value_type& val)
@@ -138,7 +156,7 @@ namespace ft
 
 				void erase (iterator position)
 				{
-					_rbt.deleteNode(position->first);
+					_rbt.deleteNode(position.getNode());
 				};
 
 
@@ -148,7 +166,7 @@ namespace ft
 
 					if (it == end())
 						return (0);
-					_rbt.deleteNode(k);
+					_rbt.deleteNode(it.getNode());
 					return (1);
 				};
 

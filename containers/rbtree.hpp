@@ -260,7 +260,7 @@ namespace ft
 
 
 
-		template <class T, class Key = T, class Compare = std::less<Key>, class Alloc = std::allocator<T> >
+		template <class T, class Key, class Compare = std::less<T>, class Alloc = std::allocator<T> >
 	class RedBlackTree
 	{
 		typedef T								value_type;
@@ -335,11 +335,13 @@ namespace ft
 
 			NodePtr searchTreeHelper(NodePtr node, key_type key) const
 			{
-				if (node == _leaf || key == node->data.first) {
+				if (node == _leaf || key == node->data)
+				{
 					return node;
 				}
 
-				if (_cmp(key, node->data.first)) {
+				if (_cmp(key, node->data))
+				{
 					return searchTreeHelper(node->left, key);
 				}
 				return searchTreeHelper(node->right, key);
@@ -431,15 +433,15 @@ namespace ft
 				v->parent = u->parent;
 			}
 
-			void deleteNodeHelper(NodePtr node, key_type val)
+			void deleteNodeHelper(NodePtr node, NodePtr ref)
 			{
 				NodePtr z = _leaf;
 				NodePtr x, y;
 				while (node != _leaf)
 				{
-					if (node->data.first == val)
+					if (node->data == ref->data)
 						z = node;
-					if (node->data.first <= val)
+					if (node->data <= ref->data)
 						node = node->right;
 					else
 						node = node->left;
@@ -769,11 +771,10 @@ namespace ft
 
 				NodePtr y = NULL;
 				NodePtr x = this->management_node->parent;
-
 				while (x != _leaf)
 				{
 					y = x;
-					if (_cmp(node->data.first, x->data.first))
+					if (_cmp(node->data, x->data))
 						x = x->left;
 					else
 						x = x->right;
@@ -781,7 +782,7 @@ namespace ft
 				node->parent = y;
 				if (y == NULL)
 					management_node->parent = node;
-				else if (_cmp(node->data.first, y->data.first))
+				else if (_cmp(node->data, y->data))
 					y->left = node;
 				else
 					y->right = node;
@@ -880,9 +881,9 @@ namespace ft
 				_size = new_size;
 			}
 
-			void deleteNode(key_type data)
+			void deleteNode(NodePtr node)
 			{
-				deleteNodeHelper(this->management_node->parent, data);
+				deleteNodeHelper(this->management_node->parent, node);
 			}
 	};
 }
