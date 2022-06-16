@@ -1,0 +1,98 @@
+CONSTRUCTOR TESTER
+OPERATOR_EQUAL TESTER
+Size of first: 0
+Size of second: 3
+BEGIN TESTER
+a => 200
+b => 100
+c => 300
+END TESTER
+a => 200
+b => 100
+c => 300
+RBEGIN TESTER
+z => 300
+y => 200
+x => 100
+REND TESTER
+z => 300
+y => 200
+x => 100
+EMPTY TESTER
+a => 10
+b => 20
+c => 30
+SIZE TESTER
+mymap.size() is 3
+MAX_SIZE TESTER
+The map contains 1000 elements.
+OPERATOR_BRACKET TESTER
+mymap['a'] is an element
+mymap['b'] is another element
+mymap['c'] is another element
+mymap['d'] is 
+mymap now contains 4 elements.
+INSERT TESTER
+element 'z' already existed with a value of 200
+mymap contains:
+a => 100
+b => 300
+c => 400
+z => 200
+anothermap contains:
+a => 100
+b => 300
+ERASE TESTER
+a => 10
+d => 40
+SWAP TESTER
+foo contains:
+a => 11
+b => 22
+c => 33
+bar contains:
+x => 100
+y => 200
+CLEAR TESTER
+mymap contains:
+x => 100
+y => 200
+z => 300
+mymap contains:
+a => 1101
+b => 2202
+KEY_COMP TESTER
+mymap contains:
+a => 100
+b => 200
+c => 300
+
+VALUE_COMP TESTER
+mymap contains:
+x => 1001
+y => 2002
+z => 3003
+FIND TESTER
+elements in mymap:
+a => 50
+c => 150
+d => 200
+COUNT TESTER
+a is an element of mymap.
+b is not an element of mymap.
+c is an element of mymap.
+d is not an element of mymap.
+e is not an element of mymap.
+f is an element of mymap.
+g is not an element of mymap.
+LOWER_BOUND TESTER
+a => 20
+e => 100
+UPPER_BOUND TESTER
+a => 20
+e => 100
+EQUAL_RANGE TESTER
+lower bound points to: b => 20
+upper bound points to: c => 30
+GET_ALLOCATOR TESTER
+The allocated array has a size of 40 bytes.
