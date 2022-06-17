@@ -6,11 +6,13 @@ c++ -Wall -Werror -Wextra -D STD=1 mains/vector_test.cpp
 ./a.out > log/std_vector
 
 if [ $# -gt 0 ]
-then
-	if [ $1 == "-v" ]
 	then
-	cat log/ft_vector
+	if [ $1 != "-m" ]
+	then
+		cat log/ft_vector
 	fi
+else
+	cat log/ft_vector
 fi
 
 

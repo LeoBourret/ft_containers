@@ -7,10 +7,12 @@ c++ -Wall -Werror -Wextra -D STD=1 mains/stack_test.cpp
 
 if [ $# -gt 0 ]
 then
-	if [ $1 == "-v" ]
+	if [ $1 != "-m" ]
 	then
-	cat log/ft_stack
+		cat log/ft_stack
 	fi
+else
+	cat log/ft_stack
 fi
 
 

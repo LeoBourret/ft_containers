@@ -7,10 +7,12 @@ c++ -Wall -Werror -Wextra -D STD=1 mains/set_test.cpp
 
 if [ $# -gt 0 ]
 then
-	if [ $1 == "-v" ]
+	if [ $1 != "-m" ]
 	then
-	cat log/ft_set
+		cat log/ft_set
 	fi
+else
+	cat log/ft_set
 fi
 
 if  diff log/ft_set log/std_set
