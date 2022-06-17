@@ -2,10 +2,6 @@
 # define FT_VECTOR_HPP
 
 # include <memory>
-/*# include "utils/type_traits.hpp"
-# include "utils/utils.hpp"
-# include "utils/random_access_iterator.hpp"
-# include "utils/lexicographical_compare.hpp"*/
 # include "type_traits.hpp"
 # include "utils.hpp"
 # include "random_access_iterator.hpp"
@@ -155,11 +151,9 @@ namespace ft
 
 				void resize (size_type n, value_type val = value_type())
 				{
-					//f n is smaller than the current container size, the content is reduced to its first n elements, removing those beyond (and destroying them).
 					if (n < _size)
 						while (_size > n)
 							pop_back();
-					//If val is specified, the new elements are initialized as copies of val, otherwise, they are value-initialized.
 					else if (n > _size)
 						insert(end(), n - size(), val);
 

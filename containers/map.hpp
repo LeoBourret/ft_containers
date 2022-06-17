@@ -1,11 +1,6 @@
 #ifndef MAP_HPP
 # define MAP_HPP
-/*
-# include "utils/rbtree.hpp"
-# include "utils/pair.hpp"
-# include "utils//utils.hpp"
-# include "utils/equal.hpp"
-# include "utils/lexicographical_compare.hpp"*/
+
 # include "rbtree.hpp"
 # include "pair.hpp"
 # include "utils.hpp"

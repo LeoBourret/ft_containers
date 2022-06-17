@@ -4,8 +4,6 @@
 #include <iostream>
 #include "utils.hpp"
 #include "pair.hpp"
-//#include "bidirectional_iterator.hpp"
-//#include "binary_tree_node1.hh"
 
 
 namespace ft
@@ -290,7 +288,6 @@ namespace ft
 				{
 					_node_alloc.destroy(node);
 					_node_alloc.deallocate(node, 1);
-					//delete node;
 				}
 			}
 
@@ -303,7 +300,6 @@ namespace ft
 				node->color = 0;
 			}
 
-			// Preorder
 			void preOrderHelper(NodePtr node)
 			{
 				if (node != _leaf)
@@ -314,7 +310,6 @@ namespace ft
 				}
 			}
 
-			// Inorder
 			void inOrderHelper(NodePtr node) {
 				if (node != _leaf) {
 					inOrderHelper(node->left);
@@ -323,7 +318,6 @@ namespace ft
 				}
 			}
 
-			// Post order
 			void postOrderHelper(NodePtr node) {
 				if (node != _leaf) {
 					postOrderHelper(node->left);
@@ -346,7 +340,6 @@ namespace ft
 				return searchTreeHelper(node->right, key);
 			}
 
-			// For balancing the tree after deletion
 			void deleteFix(NodePtr x)
 			{
 				NodePtr s;
@@ -478,19 +471,15 @@ namespace ft
 					y->left->parent = y;
 					y->color = z->color;
 				}
-//				ft::Node<T>::DG_tree(management_node->parent);
 				_node_alloc.destroy(z);
 				_node_alloc.deallocate(z, 1);
-//				delete z;
 				if (y_original_color == 0)
 					deleteFix(x);
 				_size--;
 				management_node->right = findMax();
 				management_node->left = findMin();
-				//ft::Node<T>::DG_tree(management_node->parent);
 			}
 
-			// For balancing the tree after insertion
 			void insertFix(NodePtr k)
 			{
 				NodePtr u;
@@ -554,13 +543,11 @@ namespace ft
 			{
 				_leaf = _node_alloc.allocate(1);
 				_node_alloc.construct(_leaf, value_type());
-//				_leaf = new Node<value_type>();
 				_leaf->color = 0;
 				_leaf->left = NULL;
 				_leaf->right = NULL;
 				management_node = _node_alloc.allocate(1);
 				_node_alloc.construct(management_node, value_type());
-//				management_node = new Node<value_type>;
 				management_node->parent = _leaf;
 				management_node->right = _leaf;
 				management_node->left = _leaf;
@@ -572,13 +559,11 @@ namespace ft
 			{
 				_leaf = _node_alloc.allocate(1);
 				_node_alloc.construct(_leaf, value_type());
-				//_leaf = new Node<value_type>();
 				_leaf->color = 0;
 				_leaf->left = NULL;
 				_leaf->right = NULL;
 				management_node = _node_alloc.allocate(1);
 				_node_alloc.construct(management_node, value_type());
-//				management_node = new Node<value_type>;
 				management_node->parent = _leaf;
 				management_node->right = _leaf;
 				management_node->left = _leaf;
@@ -593,8 +578,6 @@ namespace ft
 				_node_alloc.deallocate(management_node, 1);
 				_node_alloc.destroy(_leaf);
 				_node_alloc.deallocate(_leaf, 1);
-//				delete management_node;
-//				delete _leaf;
 			};
 
 			RedBlackTree &	operator= (RedBlackTree const & rhs)
@@ -607,7 +590,6 @@ namespace ft
 					insert(*it);
 				}
 				_size = rhs._size;
-//				ft::Node<T>::DG_tree(management_node->parent);
 				return *this;
 			}
 
@@ -757,12 +739,10 @@ namespace ft
 				x->parent = y;
 			}
 
-			// Inserting a node
 			NodePtr insert(value_type val)
 			{
 				NodePtr node = _node_alloc.allocate(1);
 				_node_alloc.construct(node, val);
-//				NodePtr node = new Node<value_type>(val);
 				node->parent = NULL;
 				node->left = _leaf;
 				node->right = _leaf;
@@ -792,7 +772,6 @@ namespace ft
 					management_node->left = node;
 					node->color = 0;
 					_size++;
-//					ft::Node<T>::DG_tree(management_node->parent);
 					return (node);
 				}
 				if (node->parent->parent == management_node)
@@ -805,7 +784,6 @@ namespace ft
 					else if (node == findMin())
 						management_node->left = node;
 					_size++;
-//					ft::Node<T>::DG_tree(management_node->parent);
 					return (node);
 				}
 				insertFix(node);
@@ -814,7 +792,6 @@ namespace ft
 				else if (node == findMin())
 					management_node->left = node;
 				_size++;
-//				ft::Node<T>::DG_tree(management_node->parent);
 				return (node);
 
 			}
@@ -827,18 +804,14 @@ namespace ft
 				_node_alloc.destroy(_leaf);
 				_node_alloc.deallocate(_leaf, 1);
 
-			//	delete management_node;
-			//	delete _leaf;
 				_leaf = _node_alloc.allocate(1);
 				_node_alloc.construct(_leaf, value_type());
 
-//				_leaf = new Node<value_type>();
 				_leaf->color = 0;
 				_leaf->left = NULL;
 				_leaf->right = NULL;
 				management_node = _node_alloc.allocate(1);
 				_node_alloc.construct(management_node, value_type());
-			//	management_node = new Node<value_type>;
 				management_node->parent = _leaf;
 				management_node->right = _leaf;
 				management_node->left = _leaf;
