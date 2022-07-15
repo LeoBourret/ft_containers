@@ -199,15 +199,11 @@ namespace ft
 				 */
 				reference operator[] (size_type n)
 				{
-					if (n < 0 || n > (_size - 1))
-						throw std::out_of_range("Requested element is out of range.");
 					return (_vector[n]);
 				};
 
 				const_reference operator[] (size_type n) const
 				{
-					if (n < 0 || n > (_size - 1))
-						throw std::out_of_range("Requested element is out of range.");
 					return (_vector[n]);
 				};
 
@@ -380,6 +376,8 @@ namespace ft
 					size_type distance =last - first;
 					size_type size = distance;
 
+					if (distance == 0)
+						return (first);
 					for (;first + size != end(); first++)
 					{
 						_alloc.destroy(first.base());

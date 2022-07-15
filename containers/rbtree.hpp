@@ -261,14 +261,15 @@ namespace ft
 		template <class T, class Compare = std::less<T>, class Alloc = std::allocator<T> >
 	class RedBlackTree
 	{
-		typedef T								value_type;
-		typedef Compare							key_compare;
-		typedef ft::Node<T>						*NodePtr;
-		typedef bidirectional_iterator<T>		iterator;
-		typedef const_bidirectional_iterator<T>	const_iterator;
-		typedef size_t							size_type;
-		typedef Alloc							allocator_type;
-		typedef std::allocator<ft::Node<T> >	node_allocator_type;
+		public:
+			typedef T								value_type;
+			typedef Compare							key_compare;
+			typedef ft::Node<T>						*NodePtr;
+			typedef bidirectional_iterator<T>		iterator;
+			typedef const_bidirectional_iterator<T>	const_iterator;
+			typedef size_t							size_type;
+			typedef Alloc							allocator_type;
+			typedef std::allocator<ft::Node<T> >	node_allocator_type;
 
 		private:
 			NodePtr				management_node;
@@ -276,266 +277,6 @@ namespace ft
 			size_type			_size;
 			key_compare			_cmp;
 			node_allocator_type	_node_alloc;
-
-
-			void	clear(NodePtr node)
-			{
-				if (node->left && node->left != _leaf)
-					clear(node->left);
-				if (node->right && node->right != _leaf)
-					clear(node->right);
-				if (node != management_node && node != _leaf)
-				{
-					_node_alloc.destroy(node);
-					_node_alloc.deallocate(node, 1);
-				}
-			}
-
-			void initializeNULLNode(NodePtr node, NodePtr parent)
-			{
-				node->data = node->data();
-				node->parent = parent;
-				node->left = NULL;
-				node->right = NULL;
-				node->color = 0;
-			}
-
-			void preOrderHelper(NodePtr node)
-			{
-				if (node != _leaf)
-				{
-					std::cout << node->data << " ";
-					preOrderHelper(node->left);
-					preOrderHelper(node->right);
-				}
-			}
-
-			void inOrderHelper(NodePtr node) {
-				if (node != _leaf) {
-					inOrderHelper(node->left);
-					std::cout << node->data << " ";
-					inOrderHelper(node->right);
-				}
-			}
-
-			void postOrderHelper(NodePtr node) {
-				if (node != _leaf) {
-					postOrderHelper(node->left);
-					postOrderHelper(node->right);
-					std::cout << node->data << " ";
-				}
-			}
-
-			NodePtr searchTreeHelper(NodePtr node, value_type key) const
-			{
-				if (node == _leaf || key == node->data)
-				{
-					return node;
-				}
-
-				if (_cmp(key, node->data))
-				{
-					return searchTreeHelper(node->left, key);
-				}
-				return searchTreeHelper(node->right, key);
-			}
-
-			void deleteFix(NodePtr x)
-			{
-				NodePtr s;
-
-				while (x != management_node->parent && x->color == 0)
-				{
-					if (x == x->parent->left)
-					{
-						s = x->parent->right;
-						if (s->color == 1)
-						{
-							s->color = 0;
-							x->parent->color = 1;
-							leftRotate(x->parent);
-							s = x->parent->right;
-						}
-
-						if (s->left->color == 0 && s->right->color == 0)
-						{
-							s->color = 1;
-							x = x->parent;
-						}
-						else
-						{
-							if (s->right->color == 0)
-							{
-								s->left->color = 0;
-								s->color = 1;
-								rightRotate(s);
-								s = x->parent->right;
-							}
-
-							s->color = x->parent->color;
-							x->parent->color = 0;
-							s->right->color = 0;
-							leftRotate(x->parent);
-							x = management_node->parent;
-						}
-					}
-					else
-					{
-						s = x->parent->left;
-						if (s->color == 1)
-						{
-							s->color = 0;
-							x->parent->color = 1;
-							rightRotate(x->parent);
-							s = x->parent->left;
-						}
-						if (s->right->color == 0 && s->right->color == 0)
-						{
-							s->color = 1;
-							x = x->parent;
-						}
-						else
-						{
-							if (s->left->color == 0)
-							{
-								s->right->color = 0;
-								s->color = 1;
-								leftRotate(s);
-								s = x->parent->left;
-							}
-							s->color = x->parent->color;
-							x->parent->color = 0;
-							s->left->color = 0;
-							rightRotate(x->parent);
-							x = management_node->parent;
-						}
-					}
-				}
-				x->color = 0;
-			}
-
-			void rbTransplant(NodePtr u, NodePtr v) {
-				if (u->parent == management_node) {
-					management_node->parent = v;
-				} else if (u == u->parent->left) {
-					u->parent->left = v;
-				} else {
-					u->parent->right = v;
-				}
-				v->parent = u->parent;
-			}
-
-			void deleteNodeHelper(NodePtr node, NodePtr ref)
-			{
-				NodePtr z = _leaf;
-				NodePtr x, y;
-				while (node != _leaf)
-				{
-					if (node->data == ref->data)
-						z = node;
-					if (node->data <= ref->data)
-						node = node->right;
-					else
-						node = node->left;
-				}
-				if (z == _leaf)
-					return;
-				y = z;
-				int y_original_color = y->color;
-				if (z->left == _leaf)
-				{
-					x = z->right;
-					rbTransplant(z, z->right);
-				}
-				else if (z->right == _leaf)
-				{
-					x = z->left;
-					rbTransplant(z, z->left);
-				}
-				else
-				{
-					y = minimum(z->right);
-					y_original_color = y->color;
-					x = y->right;
-					if (y->parent == z)
-						x->parent = y;
-					else
-					{
-						rbTransplant(y, y->right);
-						y->right = z->right;
-						y->right->parent = y;
-					}
-
-					rbTransplant(z, y);
-					y->left = z->left;
-					y->left->parent = y;
-					y->color = z->color;
-				}
-				_node_alloc.destroy(z);
-				_node_alloc.deallocate(z, 1);
-				if (y_original_color == 0)
-					deleteFix(x);
-				_size--;
-				management_node->right = findMax();
-				management_node->left = findMin();
-			}
-
-			void insertFix(NodePtr k)
-			{
-				NodePtr u;
-				while (k->parent->color == 1)
-				{
-					if (k->parent == k->parent->parent->right)
-					{
-						u = k->parent->parent->left;
-						if (u->color == 1)
-						{
-							u->color = 0;
-							k->parent->color = 0;
-							k->parent->parent->color = 1;
-							k = k->parent->parent;
-						}
-						else
-						{
-							if (k == k->parent->left)
-							{
-								k = k->parent;
-								rightRotate(k);
-							}
-							k->parent->color = 0;
-							k->parent->parent->color = 1;
-							leftRotate(k->parent->parent);
-						}
-					}
-					else
-					{
-						u = k->parent->parent->right;
-						if (u->color == 1)
-						{
-							u->color = 0;
-							k->parent->color = 0;
-							k->parent->parent->color = 1;
-							k = k->parent->parent;
-						}
-						else
-						{
-							if (k == k->parent->right)
-							{
-								k = k->parent;
-								leftRotate(k);
-							}
-							k->parent->color = 0;
-							k->parent->parent->color = 1;
-							rightRotate(k->parent->parent);
-						}
-					}
-					if (k == management_node->parent)
-						break;
-				}
-				management_node->parent->color = 0;
-			}
-
-
 
 		public:
 			RedBlackTree(const key_compare &comp = key_compare())
@@ -857,7 +598,268 @@ namespace ft
 			{
 				deleteNodeHelper(this->management_node->parent, node);
 			}
-	};
+
+		private:
+			void	clear(NodePtr node)
+			{
+				if (node->left && node->left != _leaf)
+					clear(node->left);
+				if (node->right && node->right != _leaf)
+					clear(node->right);
+				if (node != management_node && node != _leaf)
+				{
+					_node_alloc.destroy(node);
+					_node_alloc.deallocate(node, 1);
+				}
+			}
+
+			void initializeNULLNode(NodePtr node, NodePtr parent)
+			{
+				node->data = node->data();
+				node->parent = parent;
+				node->left = NULL;
+				node->right = NULL;
+				node->color = 0;
+			}
+
+			void preOrderHelper(NodePtr node)
+			{
+				if (node != _leaf)
+				{
+					std::cout << node->data << " ";
+					preOrderHelper(node->left);
+					preOrderHelper(node->right);
+				}
+			}
+
+			void inOrderHelper(NodePtr node) {
+				if (node != _leaf) {
+					inOrderHelper(node->left);
+					std::cout << node->data << " ";
+					inOrderHelper(node->right);
+				}
+			}
+
+			void postOrderHelper(NodePtr node) {
+				if (node != _leaf) {
+					postOrderHelper(node->left);
+					postOrderHelper(node->right);
+					std::cout << node->data << " ";
+				}
+			}
+
+			NodePtr searchTreeHelper(NodePtr node, value_type key) const
+			{
+				if (node == _leaf || key == node->data)
+				{
+					return node;
+				}
+
+				if (_cmp(key, node->data))
+				{
+					return searchTreeHelper(node->left, key);
+				}
+				return searchTreeHelper(node->right, key);
+			}
+
+			void deleteFix(NodePtr x)
+			{
+				NodePtr s;
+
+				while (x != management_node->parent && x->color == 0)
+				{
+					if (x == x->parent->left)
+					{
+						s = x->parent->right;
+						if (s->color == 1)
+						{
+							s->color = 0;
+							x->parent->color = 1;
+							leftRotate(x->parent);
+							s = x->parent->right;
+						}
+
+						if (s->left->color == 0 && s->right->color == 0)
+						{
+							s->color = 1;
+							x = x->parent;
+						}
+						else
+						{
+							if (s->right->color == 0)
+							{
+								s->left->color = 0;
+								s->color = 1;
+								rightRotate(s);
+								s = x->parent->right;
+							}
+
+							s->color = x->parent->color;
+							x->parent->color = 0;
+							s->right->color = 0;
+							leftRotate(x->parent);
+							x = management_node->parent;
+						}
+					}
+					else
+					{
+						s = x->parent->left;
+						if (s->color == 1)
+						{
+							s->color = 0;
+							x->parent->color = 1;
+							rightRotate(x->parent);
+							s = x->parent->left;
+						}
+						if (s->right->color == 0 && s->right->color == 0)
+						{
+							s->color = 1;
+							x = x->parent;
+						}
+						else
+						{
+							if (s->left->color == 0)
+							{
+								s->right->color = 0;
+								s->color = 1;
+								leftRotate(s);
+								s = x->parent->left;
+							}
+							s->color = x->parent->color;
+							x->parent->color = 0;
+							s->left->color = 0;
+							rightRotate(x->parent);
+							x = management_node->parent;
+						}
+					}
+				}
+				x->color = 0;
+			}
+
+			void rbTransplant(NodePtr u, NodePtr v) {
+				if (u->parent == management_node) {
+					management_node->parent = v;
+				} else if (u == u->parent->left) {
+					u->parent->left = v;
+				} else {
+					u->parent->right = v;
+				}
+				v->parent = u->parent;
+			}
+
+			void deleteNodeHelper(NodePtr node, NodePtr ref)
+			{
+				NodePtr z = _leaf;
+				NodePtr x, y;
+				while (node != _leaf)
+				{
+					if (node->data == ref->data)
+						z = node;
+					if (node->data <= ref->data)
+						node = node->right;
+					else
+						node = node->left;
+				}
+				if (z == _leaf)
+					return;
+				y = z;
+				int y_original_color = y->color;
+				if (z->left == _leaf)
+				{
+					x = z->right;
+					rbTransplant(z, z->right);
+				}
+				else if (z->right == _leaf)
+				{
+					x = z->left;
+					rbTransplant(z, z->left);
+				}
+				else
+				{
+					y = minimum(z->right);
+					y_original_color = y->color;
+					x = y->right;
+					if (y->parent == z)
+						x->parent = y;
+					else
+					{
+						rbTransplant(y, y->right);
+						y->right = z->right;
+						y->right->parent = y;
+					}
+
+					rbTransplant(z, y);
+					y->left = z->left;
+					y->left->parent = y;
+					y->color = z->color;
+				}
+				_node_alloc.destroy(z);
+				_node_alloc.deallocate(z, 1);
+				if (y_original_color == 0)
+					deleteFix(x);
+				_size--;
+				management_node->right = findMax();
+				management_node->left = findMin();
+			}
+
+			void insertFix(NodePtr k)
+			{
+				NodePtr u;
+				while (k->parent->color == 1)
+				{
+					if (k->parent == k->parent->parent->right)
+					{
+						u = k->parent->parent->left;
+						if (u->color == 1)
+						{
+							u->color = 0;
+							k->parent->color = 0;
+							k->parent->parent->color = 1;
+							k = k->parent->parent;
+						}
+						else
+						{
+							if (k == k->parent->left)
+							{
+								k = k->parent;
+								rightRotate(k);
+							}
+							k->parent->color = 0;
+							k->parent->parent->color = 1;
+							leftRotate(k->parent->parent);
+						}
+					}
+					else
+					{
+						u = k->parent->parent->right;
+						if (u->color == 1)
+						{
+							u->color = 0;
+							k->parent->color = 0;
+							k->parent->parent->color = 1;
+							k = k->parent->parent;
+						}
+						else
+						{
+							if (k == k->parent->right)
+							{
+								k = k->parent;
+								leftRotate(k);
+							}
+							k->parent->color = 0;
+							k->parent->parent->color = 1;
+							rightRotate(k->parent->parent);
+						}
+					}
+					if (k == management_node->parent)
+						break;
+				}
+				management_node->parent->color = 0;
+			}
+
+
+
+		};
 }
 
 #endif

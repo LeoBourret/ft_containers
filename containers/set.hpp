@@ -45,7 +45,7 @@ namespace ft
 			public:
 				explicit set (const key_compare& comp = key_compare(),
 						const allocator_type& alloc = allocator_type())
-					: _rbt(), _alloc(alloc), _comp(comp)
+					: _rbt(comp), _alloc(alloc), _comp(comp)
 				{
 				};
 
@@ -53,7 +53,7 @@ namespace ft
 					set (InputIterator first, InputIterator last,
 							const key_compare& comp = key_compare(),
 							const allocator_type& alloc = allocator_type())
-					: _rbt(), _alloc(alloc), _comp(comp)
+					: _rbt(comp), _alloc(alloc), _comp(comp)
 					{
 						insert(first, last);
 					};
