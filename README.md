@@ -2,7 +2,6 @@
 
 ![Language: C++](https://img.shields.io/badge/Language-C%2B%2B-blue.svg)
 ![Standard: C++98](https://img.shields.io/badge/Standard-C%2B%2B98-orange.svg)
-![Build: Makefile](https://img.shields.io/badge/Build-Makefile-green.svg)
 ![School: 42 Paris](https://img.shields.io/badge/School-42_Paris-orange.svg)
 ![Grade: 125/100](https://img.shields.io/badge/Grade-125/100-brightgreen.svg)
 
@@ -54,27 +53,34 @@ This project provided an invaluable deep dive into C++ templating, generic progr
 ## 🛠️ Technologies Used
 
 *   **Language:** C++ (primarily C++98 standard)
-*   **Build System:** Makefile
-*   **Concepts:** Object-Oriented Programming (OOP), Generic Programming (Templates), Advanced Data Structures (Dynamic Arrays, **Red-Black Trees**), Iterators, Memory Management (Allocators), Algorithm Complexity Analysis, Metaprogramming (SFINAE).
+*   **Concepts:** Object-Oriented Programming (OOP), Generic Programming (Templates), Advanced Data Structures (**Red-Black Trees**), Iterators, Memory Management (Allocators), Algorithm Complexity Analysis, Metaprogramming (SFINAE).
 
-## 🚀 How to Use
+## 🚀 How to Use & Compile
+
+This repository contains only the header files (`.hpp`) for the custom containers, which are designed to be directly included in your C++ projects.
 
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/LeoBourret/ft_containers.git
     cd ft_containers
     ```
-2.  **Build the test executable (or your own program):**
-    ```bash
-    make
-    # To compile tests against your ft:: containers.
-    # Optionally, to compare with standard STL: make STL=1
+2.  **Include in your C++ project:**
+    To use the `ft::` containers, simply include their respective header files in your `.cpp` source files.
+    For example, to use `ft::vector` and `ft::map`:
+    ```cpp
+    #include "containers/vector.hpp"
+    #include "containers/map.hpp"
+
+    // Your main code using ft::vector and ft::map
     ```
-3.  **Run the tests (if applicable):**
+3.  **Compile your C++ program:**
+    You will need a C++ compiler (like g++). Ensure you specify the C++98 standard, as the containers are implemented adhering to it.
     ```bash
-    ./test_containers
+    g++ -Wall -Wextra -Werror -std=c++98 your_program.cpp -o your_program
+    # Example for a test executable that uses your ft:: containers
+    # g++ -Wall -Wextra -Werror -std=c++98 main_test.cpp -I./containers -o test_ft_containers
     ```
-    (Note: The exact executable name might vary based on your Makefile setup for testing.)
+    (Note: Adjust `main_test.cpp` and `-I./containers` according to your specific test file and structure.)
 
 ## 🎓 Learning Outcomes
 
