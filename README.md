@@ -7,7 +7,7 @@
 
 ## ✨ Overview
 
-`ft_containers` is a highly challenging core project from 42 Paris, focused on **reimplementing key containers from the C++ Standard Template Library (STL)**. The objective was to build custom versions of `vector`, `map`, `stack`, and (as a bonus) `set` from scratch. The implementations strictly adhere to their original interface, behavior, and complexity requirements, primarily based on the C++98 standard, without using any part of the original STL in the final custom containers.
+`ft_containers` is a challenging core project from 42 Paris, focused on **reimplementing key containers from the C++ Standard Template Library (STL)**. The objective was to build custom versions of `vector`, `map`, `stack`, and (as a bonus) `set` from scratch. The implementations strictly adhere to their original interface, behavior, and complexity requirements, primarily based on the C++98 standard, without using any part of the original STL in the final custom containers.
 
 This project provided an invaluable deep dive into C++ templating, generic programming, iterators, complex data structures (like Red-Black Trees), memory allocation strategies, and the underlying mechanisms of common C++ containers. It rigorously tested my understanding of Object-Oriented Programming (OOP) principles and low-level resource management in C++.
 
